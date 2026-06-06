@@ -85,7 +85,33 @@
             outline: none;
         }
 
-        .profile {
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+        }
+
+        .profile-name {
             font-weight: 600;
             color: #0f172a;
         }
@@ -396,10 +422,91 @@
                 width: calc(100% - 80px);
             }
         }
+        /* Dark Mode overrides */
+        body.dark-mode {
+            background: #0b0f19;
+            color: #cbd5e1;
+        }
+        body.dark-mode .navbar,
+        body.dark-mode .card,
+        body.dark-mode .section,
+        body.dark-mode .table-container,
+        body.dark-mode .analytics-card,
+        body.dark-mode .modal-box,
+        body.dark-mode .notification-container,
+        body.dark-mode .matrix-card {
+            background: #1e293b;
+            color: #cbd5e1;
+            border-color: #334155;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode .page-title,
+        body.dark-mode .section-title,
+        body.dark-mode .profile-name,
+        body.dark-mode .pane-title,
+        body.dark-mode .vendor-title {
+            color: #f8fafc;
+        }
+        body.dark-mode td {
+            color: #cbd5e1;
+            border-bottom-color: #334155;
+        }
+        body.dark-mode .search,
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .form-group textarea,
+        body.dark-mode .selector-box select {
+            background: #0f172a;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+        body.dark-mode .btn-outline {
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+        body.dark-mode .btn-outline:hover {
+            background: #334155;
+        }
+        body.dark-mode .donut-inner {
+            background: #1e293b;
+        }
+        body.dark-mode .donut-inner h4 {
+            color: #f8fafc;
+        }
+        body.dark-mode .legend-item {
+            color: #cbd5e1;
+        }
+        body.dark-mode .notification-item {
+            border-color: #334155;
+        }
+        body.dark-mode .notification-item.unread {
+            background: #1e293b;
+        }
+        body.dark-mode .notification-desc {
+            color: #94a3b8;
+        }
+        body.dark-mode .selector-box {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark-mode .selector-box label {
+            color: #f8fafc;
+        }
+        body.dark-mode .tab-btn:hover:not(.active) {
+            background: #334155;
+            color: #f8fafc;
+        }
     </style>
 </head>
 
 <body>
+<script>
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
 
     <div class="sidebar">
         <div class="logo">
@@ -424,8 +531,9 @@
 
         <div class="navbar">
             <input type="text" class="search" placeholder="Search quotations...">
-            <div class="profile">
-                Admin User
+            <div class="profile-container">
+                <div id="profileAvatar" class="avatar-circle">A</div>
+                <div id="profileName" class="profile-name">Admin User</div>
             </div>
         </div>
 

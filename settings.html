@@ -19,7 +19,7 @@
             --input-bg: white;
         }
 
-        .dark-mode-vars {
+        .dark-mode {
             --bg-color: #0b0f19;
             --card-bg: #1e293b;
             --text-color: #cbd5e1;
@@ -100,7 +100,33 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        .profile {
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+        }
+
+        .profile-name {
             font-weight: 600;
             color: var(--title-color);
         }
@@ -353,6 +379,11 @@
 </head>
 
 <body>
+    <script>
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 
     <div class="sidebar">
         <div class="logo">
@@ -377,8 +408,9 @@
 
         <div class="navbar">
             <div></div> <!-- Spacer -->
-            <div class="profile">
-                Admin User
+            <div class="profile-container">
+                <div id="profileAvatar" class="avatar-circle">A</div>
+                <div id="profileName" class="profile-name">Admin User</div>
             </div>
         </div>
 
@@ -525,7 +557,7 @@
     <script>
         // Check for saved dark mode preference
         if (localStorage.getItem('darkMode') === 'enabled') {
-            document.body.classList.add('dark-mode-vars');
+            document.body.classList.add('dark-mode');
             document.getElementById('darkModeToggle').checked = true;
         }
 
@@ -543,11 +575,11 @@
         function handleDarkModeChange() {
             const toggle = document.getElementById('darkModeToggle');
             if (toggle.checked) {
-                document.body.classList.add('dark-mode-vars');
+                document.body.classList.add('dark-mode');
                 localStorage.setItem('darkMode', 'enabled');
                 showToast("Dark Mode Enabled");
             } else {
-                document.body.classList.remove('dark-mode-vars');
+                document.body.classList.remove('dark-mode');
                 localStorage.setItem('darkMode', 'disabled');
                 showToast("Dark Mode Disabled");
             }
