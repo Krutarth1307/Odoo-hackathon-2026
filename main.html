@@ -229,8 +229,26 @@
 </head>
 
 <body>
+    <div id="loginPage">
 
+<<<<<<< HEAD
     <div class="sidebar">
+=======
+<h2>VendorBridge Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<br><br>
+
+<input type="password" id="password" placeholder="Password">
+<br><br>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<div id="dashboard" style="display:none;">
+<div class="sidebar">
+>>>>>>> 1b1d83c1e273e4e72bc93d4b9cac59d430a9a0b9
 
         <div class="logo">
             VendorBridge
@@ -406,8 +424,42 @@
 
         </div>
 
+<<<<<<< HEAD
     </div>
 
 </body>
 
 </html>
+=======
+</div>
+</div>
+
+<script>
+
+function login(){
+
+let email =
+document.getElementById("email").value;
+
+let password =
+document.getElementById("password").value;
+
+if(email && password){
+
+document.getElementById("loginPage").style.display="none";
+
+document.getElementById("dashboard").style.display="block";
+
+}else{
+
+alert("Please enter Email and Password");
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
+>>>>>>> 1b1d83c1e273e4e72bc93d4b9cac59d430a9a0b9
