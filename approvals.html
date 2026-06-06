@@ -1011,6 +1011,23 @@
             });
         });
     </script>
+async function loadApprovalStats() {
+    try {
+        const res = await fetch('http://127.0.0.1:3000/approvals');
+        const approvals = await res.json();
+
+        const pending = approvals.filter(a => a.status === 'PENDING').length;
+        const approved = approvals.filter(a => a.status === 'APPROVED').length;
+        const rejected = approvals.filter(a => a.status === 'REJECTED').length;
+
+        document.getElementById('pendingCount').innerText = pending;
+        document.getElementById('approvedCount').innerText = approved;
+        document.getElementById('rejectedCount').innerText = rejected;
+    } catch(e) {
+        console.error('Approvals API error:', e);
+    }
+}
+loadApprovalStats();
 </body>
 
 </html>
