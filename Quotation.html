@@ -1231,6 +1231,40 @@
             });
         });
     </script>
+    <script>
+async function loadQuotations() {
+    try {
+        const res = await fetch('http://127.0.0.1:3000/quotations');
+        const quotations = await res.json();
+
+        // Update pending count
+        const pending = quotations.filter(q => q.status === 'SUBMITTED').length;
+        document.getElementById('pendingCount').innerText = pending;
+
+        // Load real rows into table
+        const tbody = document.querySelector('#registryPane table tbody');
+        tbody.innerHTML = '';
+        quotations.forEach(q => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>QTN-${q.id}</strong></td>
+                    <td>RFQ #${q.rfq_id}</td>
+                    <td>Vendor #${q.vendor_id}</td>
+                    <td>-</td>
+                    <td>₹${Number(q.price).toLocaleString()}</td>
+                    <td>${q.delivery_days} Days</td>
+                    <td><span class="status ${q.status === 'APPROVED' ? 'approved' : q.status === 'REJECTED' ? 'rejected' : 'pending'}">${q.status}</span></td>
+                    <td class="action-cell">
+                        <button class="btn btn-primary">Submit Approval</button>
+                    </td>
+                </tr>`;
+        });
+    } catch(e) {
+        console.error('Quotations API error:', e);
+    }
+}
+loadQuotations();
+</script>
 </body>
 
 </html>
