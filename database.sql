@@ -150,11 +150,11 @@ email,
 status
 )
 VALUES(
-'ABC Technologies',
-'24ABCDE1234F1Z5',
-'IT Hardware',
+'Infosys Limited',
+'29AAACI3946F1ZT',
+'IT Hardware & Software Services',
 '9876543210',
-'[abc@gmail.com](mailto:abc@gmail.com)',
+'info@infosys.com',
 'ACTIVE'
 );
 
@@ -171,8 +171,8 @@ status,
 created_by
 )
 VALUES(
-'Laptop Procurement',
-'Dell Latitude Laptops',
+'Lenovo ThinkPad L14 Gen 4',
+'Lenovo ThinkPad L14 Laptops',
 10,
 '2026-07-01',
 'OPEN',

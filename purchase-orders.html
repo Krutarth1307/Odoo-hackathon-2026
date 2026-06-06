@@ -437,7 +437,7 @@
                 </div>
                 <div class="card">
                     <h3>Total Value</h3>
-                    <h1 id="totalValue">$32,700</h1>
+                    <h1 id="totalValue">₹19,20,000</h1>
                 </div>
             </div>
 
@@ -458,22 +458,22 @@
                     <tbody id="poTableBody">
                         <tr id="po-PO-2026-001">
                             <td><strong>PO-2026-001</strong></td>
-                            <td>ABC Technologies</td>
+                            <td>Infosys Limited</td>
                             <td>01 Jun 2026</td>
                             <td>10 Jun 2026</td>
-                            <td>$15,000</td>
+                            <td>₹1,50,000</td>
                             <td><span class="status pending" id="status-PO-2026-001">Pending</span></td>
                             <td class="action-cell">
-                                <button class="btn btn-outline" onclick="markReceived('PO-2026-001', 15000)">Receive</button>
+                                <button class="btn btn-outline" onclick="markReceived('PO-2026-001', 150000)">Receive</button>
                                 <button class="btn btn-outline" style="color: #dc2626;" onclick="cancelPO('PO-2026-001')">Cancel</button>
                             </td>
                         </tr>
                         <tr id="po-PO-2026-002">
                             <td><strong>PO-2026-002</strong></td>
-                            <td>XYZ Supplies</td>
+                            <td>Godrej Interio</td>
                             <td>02 Jun 2026</td>
                             <td>08 Jun 2026</td>
-                            <td>$1,250</td>
+                            <td>₹1,25,000</td>
                             <td><span class="status received">Received</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">No actions</span>
@@ -481,22 +481,22 @@
                         </tr>
                         <tr id="po-PO-2026-003">
                             <td><strong>PO-2026-003</strong></td>
-                            <td>Global Electronics</td>
+                            <td>Reliance Digital (Croma)</td>
                             <td>04 Jun 2026</td>
                             <td>12 Jun 2026</td>
-                            <td>$8,400</td>
+                            <td>₹8,40,000</td>
                             <td><span class="status pending" id="status-PO-2026-003">Pending</span></td>
                             <td class="action-cell">
-                                <button class="btn btn-outline" onclick="markReceived('PO-2026-003', 8400)">Receive</button>
+                                <button class="btn btn-outline" onclick="markReceived('PO-2026-003', 840000)">Receive</button>
                                 <button class="btn btn-outline" style="color: #dc2626;" onclick="cancelPO('PO-2026-003')">Cancel</button>
                             </td>
                         </tr>
                         <tr id="po-PO-2026-004">
                             <td><strong>PO-2026-004</strong></td>
-                            <td>ABC Technologies</td>
+                            <td>Infosys Limited</td>
                             <td>05 Jun 2026</td>
                             <td>05 Jun 2026</td>
-                            <td>$5,200</td>
+                            <td>₹5,20,000</td>
                             <td><span class="status received">Received</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">No actions</span>
@@ -504,10 +504,10 @@
                         </tr>
                         <tr id="po-PO-2026-005">
                             <td><strong>PO-2026-005</strong></td>
-                            <td>XYZ Supplies</td>
+                            <td>Godrej Interio</td>
                             <td>06 Jun 2026</td>
                             <td>06 Jun 2026</td>
-                            <td>$2,850</td>
+                            <td>₹2,85,000</td>
                             <td><span class="status received">Received</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">No actions</span>
@@ -531,9 +531,9 @@
                 <div class="form-group">
                     <label for="poVendor">Select Vendor</label>
                     <select id="poVendor" required>
-                        <option value="ABC Technologies">ABC Technologies</option>
-                        <option value="XYZ Supplies">XYZ Supplies</option>
-                        <option value="Global Electronics">Global Electronics</option>
+                        <option value="Infosys Limited">Infosys Limited</option>
+                        <option value="Godrej Interio">Godrej Interio</option>
+                        <option value="Reliance Digital (Croma)">Reliance Digital (Croma)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -545,7 +545,7 @@
                     <input type="date" id="poDelivery" required>
                 </div>
                 <div class="form-group">
-                    <label for="poAmount">Total Amount ($)</label>
+                    <label for="poAmount">Total Amount (₹)</label>
                     <input type="number" id="poAmount" min="1" step="any" placeholder="Enter PO Amount" required>
                 </div>
                 <div class="modal-footer">
@@ -566,7 +566,7 @@
         let totalCount = 5;
         let pendingCount = 2;
         let receivedCount = 3;
-        let totalValue = 32700;
+        let totalValue = 1920000;
 
         // Set default date values in form
         document.getElementById('poDate').valueAsDate = new Date();
@@ -610,7 +610,7 @@
                 <td>${vendor}</td>
                 <td>${issueDate}</td>
                 <td>${deliveryDate}</td>
-                <td>$${amount.toLocaleString()}</td>
+                <td>₹${amount.toLocaleString()}</td>
                 <td><span class="status pending" id="status-${poId}">Pending</span></td>
                 <td class="action-cell">
                     <button class="btn btn-outline" onclick="markReceived('${poId}', ${amount})">Receive</button>
@@ -671,7 +671,7 @@
             document.getElementById('totalPO').innerText = totalCount;
             document.getElementById('pendingPO').innerText = pendingCount;
             document.getElementById('receivedPO').innerText = receivedCount;
-            document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString();
+            document.getElementById('totalValue').innerText = '₹' + totalValue.toLocaleString();
         }
 
         function formatDate(dateString) {

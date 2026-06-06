@@ -445,10 +445,10 @@
                     <tbody id="invoiceTableBody">
                         <tr id="inv-INV-2026-001">
                             <td><strong>INV-2026-001</strong></td>
-                            <td>ABC Technologies</td>
+                            <td>Infosys Limited</td>
                             <td>01 Jun 2026</td>
                             <td>15 Jun 2026</td>
-                            <td>$15,000</td>
+                            <td>₹1,50,000</td>
                             <td><span class="status unpaid" id="status-INV-2026-001">Unpaid</span></td>
                             <td class="action-cell">
                                 <button class="btn btn-outline" onclick="payInvoice('INV-2026-001')">Pay Now</button>
@@ -456,10 +456,10 @@
                         </tr>
                         <tr id="inv-INV-2026-002">
                             <td><strong>INV-2026-002</strong></td>
-                            <td>XYZ Supplies</td>
+                            <td>Godrej Interio</td>
                             <td>15 May 2026</td>
                             <td>30 May 2026</td>
-                            <td>$1,250</td>
+                            <td>₹1,25,000</td>
                             <td><span class="status overdue" id="status-INV-2026-002">Overdue</span></td>
                             <td class="action-cell">
                                 <button class="btn btn-outline" onclick="payInvoice('INV-2026-002', true)">Pay Now</button>
@@ -467,10 +467,10 @@
                         </tr>
                         <tr id="inv-INV-2026-003">
                             <td><strong>INV-2026-003</strong></td>
-                            <td>Global Electronics</td>
+                            <td>Reliance Digital (Croma)</td>
                             <td>04 Jun 2026</td>
                             <td>18 Jun 2026</td>
-                            <td>$8,400</td>
+                            <td>₹8,40,000</td>
                             <td><span class="status paid">Paid</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">Cleared</span>
@@ -478,10 +478,10 @@
                         </tr>
                         <tr id="inv-INV-2026-004">
                             <td><strong>INV-2026-004</strong></td>
-                            <td>ABC Technologies</td>
+                            <td>Infosys Limited</td>
                             <td>05 Jun 2026</td>
                             <td>20 Jun 2026</td>
-                            <td>$5,200</td>
+                            <td>₹5,20,000</td>
                             <td><span class="status paid">Paid</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">Cleared</span>
@@ -489,10 +489,10 @@
                         </tr>
                         <tr id="inv-INV-2026-005">
                             <td><strong>INV-2026-005</strong></td>
-                            <td>XYZ Supplies</td>
+                            <td>Godrej Interio</td>
                             <td>06 Jun 2026</td>
                             <td>21 Jun 2026</td>
-                            <td>$2,850</td>
+                            <td>₹2,85,000</td>
                             <td><span class="status paid">Paid</span></td>
                             <td class="action-cell">
                                 <span style="color: #64748b; font-size: 13px;">Cleared</span>
@@ -516,9 +516,9 @@
                 <div class="form-group">
                     <label for="invVendor">Select Vendor</label>
                     <select id="invVendor" required>
-                        <option value="ABC Technologies">ABC Technologies</option>
-                        <option value="XYZ Supplies">XYZ Supplies</option>
-                        <option value="Global Electronics">Global Electronics</option>
+                        <option value="Infosys Limited">Infosys Limited</option>
+                        <option value="Godrej Interio">Godrej Interio</option>
+                        <option value="Reliance Digital (Croma)">Reliance Digital (Croma)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -530,7 +530,7 @@
                     <input type="date" id="invDue" required>
                 </div>
                 <div class="form-group">
-                    <label for="invAmount">Total Amount ($)</label>
+                    <label for="invAmount">Total Amount (₹)</label>
                     <input type="number" id="invAmount" min="1" step="any" placeholder="Enter Invoice Amount" required>
                 </div>
                 <div class="modal-footer">
@@ -594,7 +594,7 @@
                 <td>${vendor}</td>
                 <td>${issueDate}</td>
                 <td>${dueDate}</td>
-                <td>$${amount.toLocaleString()}</td>
+                <td>₹${amount.toLocaleString()}</td>
                 <td><span class="status unpaid" id="status-${invId}">Unpaid</span></td>
                 <td class="action-cell">
                     <button class="btn btn-outline" onclick="payInvoice('${invId}')">Pay Now</button>

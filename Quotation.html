@@ -1,153 +1,672 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vendor Quotation Submission</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorBridge ERP - Quotations</title>
 
-<style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-body{
-background:#f4f7fc;
-padding:30px;
-}
+        body {
+            background: #f4f7fc;
+            display: flex;
+            min-height: 100vh;
+        }
 
-.container{
-max-width:900px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: auto;
+        }
 
-h1{
-margin-bottom:25px;
-color:#0f172a;
-}
+        .logo {
+            padding: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+        }
 
-.form-group{
-margin-bottom:20px;
-}
+        .menu {
+            padding: 20px;
+        }
 
-label{
-display:block;
-margin-bottom:8px;
-font-weight:bold;
-}
+        .menu a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            transition: .3s;
+        }
 
-input,
-textarea,
-select{
-width:100%;
-padding:12px;
-border:1px solid #ddd;
-border-radius:8px;
-}
+        .menu a:hover, .menu a.active {
+            background: #2563eb;
+        }
 
-textarea{
-height:120px;
-resize:none;
-}
+        .menu a.active {
+            font-weight: 600;
+        }
 
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
 
-.btn{
-background:#2563eb;
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-size:16px;
-}
+        .navbar {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        }
 
-.btn:hover{
-background:#1d4ed8;
-}
+        .search {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
 
-</style>
+        .profile {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .card h1 {
+            font-size: 32px;
+            color: #2563eb;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            margin-bottom: 30px;
+            overflow: auto;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #334155;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .approved {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Comparison Section */
+        .comparison-pane {
+            display: none;
+        }
+
+        .comparison-pane.active {
+            display: block;
+        }
+
+        .selector-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .selector-box select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            outline: none;
+            font-size: 14px;
+            color: #334155;
+            min-width: 250px;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .matrix-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .matrix-card.best-deal {
+            border: 2px solid #10b981;
+        }
+
+        .matrix-card.best-deal::before {
+            content: "⭐ Best Price";
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .vendor-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #f1f5f9;
+            font-size: 14px;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #64748b;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .metric-value.highlight {
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1200;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .menu a {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .main {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            VendorBridge
+        </div>
 
-<h1>Vendor Quotation Submission</h1>
+        <div class="menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="vendor.html">🏢 Vendors</a>
+            <a href="rfq.html">📄 RFQs</a>
+            <a href="Quotation.html" class="active">💰 Quotations</a>
+            <a href="approvals.html">✅ Approvals</a>
+            <a href="purchase-orders.html">🛒 Purchase Orders</a>
+            <a href="invoices.html">🧾 Invoices</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="notifications.html">🔔 Notifications</a>
+            <a href="settings.html">⚙ Settings</a>
+        </div>
+    </div>
 
-<form>
+    <div class="main">
 
-<div class="form-group">
-<label>Vendor Name</label>
-<input type="text" placeholder="Enter Vendor Name">
-</div>
+        <div class="navbar">
+            <input type="text" class="search" placeholder="Search quotations...">
+            <div class="profile">
+                Admin User
+            </div>
+        </div>
 
-<div class="row">
+        <div class="content">
 
-<div class="form-group">
-<label>RFQ ID</label>
-<input type="text" placeholder="RFQ001">
-</div>
+            <div class="page-header">
+                <h1 class="page-title">Quotations Management</h1>
+            </div>
 
-<div class="form-group">
-<label>Quotation Amount (₹)</label>
-<input type="number" placeholder="Enter Amount">
-</div>
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Quotes Received</h3>
+                    <h1>28</h1>
+                </div>
+                <div class="card">
+                    <h3>Pending Review</h3>
+                    <h1 id="pendingCount">8</h1>
+                </div>
+                <div class="card">
+                    <h3>Approved Bids</h3>
+                    <h1>14</h1>
+                </div>
+                <div class="card">
+                    <h3>Average Value</h3>
+                    <h1>₹24,500</h1>
+                </div>
+            </div>
 
-</div>
+            <div class="table-container">
+                <div class="tabs-header">
+                    <button id="tab-registry-btn" class="tab-btn active" onclick="switchPane('registry')">Quotations Registry</button>
+                    <button id="tab-compare-btn" class="tab-btn" onclick="switchPane('compare')">Compare Bids side-by-side</button>
+                </div>
 
-<div class="row">
+                <!-- Quotation Registry Pane -->
+                <div id="registryPane" class="registry-pane">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Quote ID</th>
+                                <th>RFQ Reference</th>
+                                <th>Vendor</th>
+                                <th>Submission Date</th>
+                                <th>Quote Amount</th>
+                                <th>Delivery Duration</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="q-QTN-8801">
+                                <td><strong>QTN-8801</strong></td>
+                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
+                                <td>Infosys Limited</td>
+                                <td>05 Jun 2026</td>
+                                <td>₹1,45,000</td>
+                                <td>5 Days</td>
+                                <td><span class="status pending" id="status-QTN-8801">Pending Review</span></td>
+                                <td class="action-cell">
+                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8801', 'RFQ002')">Submit Approval</button>
+                                </td>
+                            </tr>
+                            <tr id="q-QTN-8802">
+                                <td><strong>QTN-8802</strong></td>
+                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
+                                <td>Godrej Interio</td>
+                                <td>06 Jun 2026</td>
+                                <td>₹1,38,000</td>
+                                <td>7 Days</td>
+                                <td><span class="status pending" id="status-QTN-8802">Pending Review</span></td>
+                                <td class="action-cell">
+                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8802', 'RFQ002')">Submit Approval</button>
+                                </td>
+                            </tr>
+                            <tr id="q-QTN-8803">
+                                <td><strong>QTN-8803</strong></td>
+                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
+                                <td>Reliance Digital (Croma)</td>
+                                <td>06 Jun 2026</td>
+                                <td>₹1,52,000</td>
+                                <td>4 Days</td>
+                                <td><span class="status pending" id="status-QTN-8803">Pending Review</span></td>
+                                <td class="action-cell">
+                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8803', 'RFQ002')">Submit Approval</button>
+                                </td>
+                            </tr>
+                            <tr id="q-QTN-8790">
+                                <td><strong>QTN-8790</strong></td>
+                                <td>RFQ001 - Lenovo ThinkPad L14 Gen 4</td>
+                                <td>Infosys Limited</td>
+                                <td>03 Jun 2026</td>
+                                <td>₹5,20,000</td>
+                                <td>10 Days</td>
+                                <td><span class="status approved">Approved</span></td>
+                                <td class="action-cell">
+                                    <span style="color: #64748b; font-size: 13px;">Converted to PO</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-<div class="form-group">
-<label>Delivery Timeline (Days)</label>
-<input type="number" placeholder="Enter Delivery Days">
-</div>
+                <!-- Compare Bids Pane -->
+                <div id="comparePane" class="comparison-pane">
+                    <div class="selector-box">
+                        <label for="rfqSelector" style="font-weight: 600; color: #0f172a;">Select RFQ to Compare:</label>
+                        <select id="rfqSelector" onchange="loadComparisonData()">
+                            <option value="RFQ002">RFQ002 - Godrej Ergonomic Mesh Chairs</option>
+                            <option value="RFQ001">RFQ001 - Lenovo ThinkPad L14 Gen 4</option>
+                            <option value="RFQ003">RFQ003 - Cisco Catalyst 9300 Switches</option>
+                        </select>
+                    </div>
 
-<div class="form-group">
-<label>Quotation Valid Till</label>
-<input type="date">
-</div>
+                    <div class="matrix-grid" id="comparisonMatrix">
+                        <!-- Loaded dynamically via JavaScript below -->
+                    </div>
+                </div>
+            </div>
 
-</div>
+        </div>
+    </div>
 
-<div class="form-group">
-<label>Payment Terms</label>
-<select>
-<option>Advance Payment</option>
-<option>50% Advance + 50% Delivery</option>
-<option>Net 30 Days</option>
-<option>Net 60 Days</option>
-</select>
-</div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">💰</span>
+        <span id="toastMsg"></span>
+    </div>
 
-<div class="form-group">
-<label>Notes / Comments</label>
-<textarea placeholder="Additional Notes"></textarea>
-</div>
+    <script>
+        let pendingCount = 8;
 
-<div class="form-group">
-<label>Attach Quotation File</label>
-<input type="file">
-</div>
+        // Auto-switch based on URL Hash
+        window.addEventListener('DOMContentLoaded', () => {
+            if(window.location.hash === '#compare') {
+                switchPane('compare');
+            } else {
+                switchPane('registry');
+            }
+            loadComparisonData();
+        });
 
-<button type="submit" class="btn">
-Submit Quotation
-</button>
+        function switchPane(pane) {
+            const registryPane = document.getElementById('registryPane');
+            const comparePane = document.getElementById('comparePane');
+            const registryBtn = document.getElementById('tab-registry-btn');
+            const compareBtn = document.getElementById('tab-compare-btn');
 
-</form>
+            if (pane === 'registry') {
+                registryPane.style.display = 'block';
+                comparePane.style.display = 'none';
+                registryBtn.classList.add('active');
+                compareBtn.classList.remove('active');
+                window.location.hash = 'registry';
+            } else {
+                registryPane.style.display = 'none';
+                comparePane.style.display = 'block';
+                registryBtn.classList.remove('active');
+                compareBtn.classList.add('active');
+                window.location.hash = 'compare';
+            }
+        }
 
-</div>
+        function submitForApproval(qtnId, rfqRef) {
+            const badge = document.getElementById('status-' + qtnId);
+            badge.className = 'status approved';
+            badge.innerText = 'Submitted';
+            
+            const row = document.getElementById('q-' + qtnId);
+            const actionCell = row.querySelector('.action-cell');
+            actionCell.innerHTML = '<span style="color: #16a34a; font-size: 13px; font-weight: 600;">Awaiting Approval</span>';
 
+            pendingCount--;
+            document.getElementById('pendingCount').innerText = pendingCount;
+
+            showToast('✅', `Quotation ${qtnId} for ${rfqRef} submitted to Approvals queue.`);
+        }
+
+        const rfqData = {
+            'RFQ002': [
+                { vendor: 'Godrej Interio', amount: 138000, delivery: '7 Days', warranty: '1 Year', rating: '4.5/5', best: true },
+                { vendor: 'Infosys Limited', amount: 145000, delivery: '5 Days', warranty: '2 Years', rating: '4.8/5', best: false },
+                { vendor: 'Reliance Digital (Croma)', amount: 152000, delivery: '4 Days', warranty: '1 Year', rating: '4.2/5', best: false }
+            ],
+            'RFQ001': [
+                { vendor: 'Infosys Limited', amount: 520000, delivery: '10 Days', warranty: '3 Years', rating: '4.8/5', best: true },
+                { vendor: 'Reliance Digital (Croma)', amount: 535000, delivery: '8 Days', warranty: '3 Years', rating: '4.3/5', best: false },
+                { vendor: 'Godrej Interio', amount: 550000, delivery: '12 Days', warranty: '2 Years', rating: '4.5/5', best: false }
+            ],
+            'RFQ003': [
+                { vendor: 'Reliance Digital (Croma)', amount: 840000, delivery: '5 Days', warranty: '2 Years', rating: '4.4/5', best: true },
+                { vendor: 'Infosys Limited', amount: 890000, delivery: '6 Days', warranty: '3 Years', rating: '4.8/5', best: false },
+                { vendor: 'Godrej Interio', amount: 920000, delivery: '7 Days', warranty: '1 Year', rating: '4.2/5', best: false }
+            ]
+        };
+
+        function loadComparisonData() {
+            const rfq = document.getElementById('rfqSelector').value;
+            const bids = rfqData[rfq] || [];
+            const container = document.getElementById('comparisonMatrix');
+            container.innerHTML = '';
+
+            bids.forEach(bid => {
+                const card = document.createElement('div');
+                card.className = `matrix-card ${bid.best ? 'best-deal' : ''}`;
+                card.innerHTML = `
+                    <div class="vendor-title">${bid.vendor}</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Quote Price:</span>
+                        <span class="metric-value ${bid.best ? 'highlight' : ''}">₹${bid.amount.toLocaleString()}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Delivery Target:</span>
+                        <span class="metric-value">${bid.delivery}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Warranty Support:</span>
+                        <span class="metric-value">${bid.warranty}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Vendor Rating:</span>
+                        <span class="metric-value" style="color: #f59e0b;">★ ${bid.rating}</span>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="btn btn-outline" style="width: 100%;" onclick="showToast('🛒', 'Selected ${bid.vendor} for PO generation.')">Accept Quotation</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function showToast(icon, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').innerText = icon;
+            document.getElementById('toastMsg').innerText = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
 </body>
+
 </html>
