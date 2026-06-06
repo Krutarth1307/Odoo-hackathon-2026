@@ -229,7 +229,21 @@ width:150px;
 </head>
 
 <body>
+    <div id="loginPage">
 
+<h2>VendorBridge Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<br><br>
+
+<input type="password" id="password" placeholder="Password">
+<br><br>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<div id="dashboard" style="display:none;">
 <div class="sidebar">
 
 <div class="logo">
@@ -407,6 +421,33 @@ RFQ Management
 </div>
 
 </div>
+</div>
+
+<script>
+
+function login(){
+
+let email =
+document.getElementById("email").value;
+
+let password =
+document.getElementById("password").value;
+
+if(email && password){
+
+document.getElementById("loginPage").style.display="none";
+
+document.getElementById("dashboard").style.display="block";
+
+}else{
+
+alert("Please enter Email and Password");
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
