@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Quotation Submission</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f7fc;
+padding:30px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h1{
+margin-bottom:25px;
+color:#0f172a;
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.btn{
+background:#2563eb;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Vendor Quotation Submission</h1>
+
+<form>
+
+<div class="form-group">
+<label>Vendor Name</label>
+<input type="text" placeholder="Enter Vendor Name">
+</div>
+
+<div class="row">
+
+<div class="form-group">
+<label>RFQ ID</label>
+<input type="text" placeholder="RFQ001">
+</div>
+
+<div class="form-group">
+<label>Quotation Amount (₹)</label>
+<input type="number" placeholder="Enter Amount">
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="form-group">
+<label>Delivery Timeline (Days)</label>
+<input type="number" placeholder="Enter Delivery Days">
+</div>
+
+<div class="form-group">
+<label>Quotation Valid Till</label>
+<input type="date">
+</div>
+
+</div>
+
+<div class="form-group">
+<label>Payment Terms</label>
+<select>
+<option>Advance Payment</option>
+<option>50% Advance + 50% Delivery</option>
+<option>Net 30 Days</option>
+<option>Net 60 Days</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Notes / Comments</label>
+<textarea placeholder="Additional Notes"></textarea>
+</div>
+
+<div class="form-group">
+<label>Attach Quotation File</label>
+<input type="file">
+</div>
+
+<button type="submit" class="btn">
+Submit Quotation
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
