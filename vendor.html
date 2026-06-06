@@ -122,5 +122,35 @@ color:green;
 
 </table>
 
+<script>
+async function loadVendors() {
+    try {
+        const response = await fetch('http://127.0.0.1:3000/vendors');
+        const vendors = await response.json();
+        
+        const table = document.querySelector('table');
+        // Remove hardcoded rows (keep header)
+        const header = table.querySelector('tr');
+        table.innerHTML = '';
+        table.appendChild(header);
+        
+        vendors.forEach(v => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${v.vendor_name}</td>
+                <td>${v.category}</td>
+                <td>${v.gst_number}</td>
+                <td><span class="status">${v.status}</span></td>
+                <td><button>View</button></td>
+            `;
+            table.appendChild(row);
+        });
+    } catch(error) {
+        console.error('Vendor API Error:', error);
+    }
+}
+loadVendors();
+</script>
+
 </body>
 </html>
