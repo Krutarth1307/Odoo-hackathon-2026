@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create RFQ</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f7fc;
+padding:30px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h1{
+margin-bottom:25px;
+color:#0f172a;
+}
+
+.form-group{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.btn{
+background:#2563eb;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+.vendor-box{
+border:1px solid #ddd;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Create RFQ</h1>
+
+<form>
+
+<div class="form-group">
+<label>RFQ Title</label>
+<input type="text" placeholder="Enter RFQ Title">
+</div>
+
+<div class="form-group">
+<label>Product / Service Details</label>
+<textarea placeholder="Describe products or services"></textarea>
+</div>
+
+<div class="row">
+
+<div class="form-group">
+<label>Quantity</label>
+<input type="number" placeholder="Enter Quantity">
+</div>
+
+<div class="form-group">
+<label>Deadline</label>
+<input type="date">
+</div>
+
+</div>
+
+<div class="form-group">
+<label>Estimated Budget</label>
+<input type="number" placeholder="Enter Budget">
+</div>
+
+<div class="form-group">
+<label>Vendor Category</label>
+
+<select>
+<option>IT Hardware</option>
+<option>Electronics</option>
+<option>Furniture</option>
+<option>Software</option>
+<option>Networking</option>
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Select Vendors</label>
+
+<div class="vendor-box">
+<input type="checkbox"> ABC Technologies
+</div>
+
+<div class="vendor-box">
+<input type="checkbox"> XYZ Supplies
+</div>
+
+<div class="vendor-box">
+<input type="checkbox"> Global Electronics
+</div>
+
+</div>
+
+<div class="form-group">
+<label>Upload Attachment</label>
+<input type="file">
+</div>
+
+<div class="form-group">
+<label>Special Instructions</label>
+<textarea placeholder="Any additional requirements"></textarea>
+</div>
+
+<button type="submit" class="btn">
+Create RFQ
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
