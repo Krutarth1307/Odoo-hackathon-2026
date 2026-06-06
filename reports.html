@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorBridge ERP - Reports & Analytics</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: auto;
+        }
+
+        .logo {
+            padding: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .menu {
+            padding: 20px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .menu a:hover, .menu a.active {
+            background: #2563eb;
+        }
+
+        .menu a.active {
+            font-weight: 600;
+        }
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .navbar {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        }
+
+        .profile {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            color: #334155;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.08);
+        }
+
+        .analytics-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding-top: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 12%;
+            height: 100%;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(to top, #2563eb, #60a5fa);
+            border-radius: 6px 6px 0 0;
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            background: linear-gradient(to top, #1d4ed8, #3b82f6);
+        }
+
+        .bar-tooltip {
+            position: absolute;
+            top: -35px;
+            background: #0f172a;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .bar:hover .bar-tooltip {
+            opacity: 1;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* Donut Chart Visual */
+        .donut-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+        }
+
+        .donut-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #2563eb 0% 55%,
+                #10b981 55% 80%,
+                #f59e0b 80% 100%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .donut-inner {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-inner span {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .donut-inner h4 {
+            font-size: 18px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .chart-legend {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        /* Recent Reports Registry */
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #334155;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1200;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Overlay Spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e2e8f0;
+            border-top: 5px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .menu a {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .main {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            VendorBridge
+        </div>
+
+        <div class="menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="vendor.html">🏢 Vendors</a>
+            <a href="rfq.html">📄 RFQs</a>
+            <a href="#">💰 Quotations</a>
+            <a href="approvals.html">✅ Approvals</a>
+            <a href="purchase-orders.html">🛒 Purchase Orders</a>
+            <a href="invoices.html">🧾 Invoices</a>
+            <a href="reports.html" class="active">📈 Reports</a>
+            <a href="notifications.html">🔔 Notifications</a>
+            <a href="#">⚙ Settings</a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <div class="navbar">
+            <div></div> <!-- Spacer -->
+            <div class="profile">
+                Admin User
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h1 class="page-title">Reports & Analytics</h1>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Report Type</label>
+                    <select id="reportType">
+                        <option value="Expenditure">Expenditure Analysis</option>
+                        <option value="Vendor Performance">Vendor Performance</option>
+                        <option value="RFQ Summary">RFQ & Quotations Summary</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Period</label>
+                    <select id="reportPeriod">
+                        <option value="Last 30 Days">Last 30 Days</option>
+                        <option value="This Quarter">This Quarter</option>
+                        <option value="This Year">This Year</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="margin-left: auto;">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        ⚡ Generate Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>
+                        Expenditure Analysis 
+                        <span style="font-size: 12px; color: #64748b; font-weight: normal;">Monthly ($)</span>
+                    </h3>
+                    <div class="chart-placeholder">
+                        <div class="bar-container">
+                            <div class="bar" style="height: 45%;">
+                                <div class="bar-tooltip">$14,500</div>
+                            </div>
+                            <span class="bar-label">Jan</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 60%;">
+                                <div class="bar-tooltip">$18,200</div>
+                            </div>
+                            <span class="bar-label">Feb</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 35%;">
+                                <div class="bar-tooltip">$11,800</div>
+                            </div>
+                            <span class="bar-label">Mar</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 80%;">
+                                <div class="bar-tooltip">$24,900</div>
+                            </div>
+                            <span class="bar-label">Apr</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 55%;">
+                                <div class="bar-tooltip">$16,700</div>
+                            </div>
+                            <span class="bar-label">May</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar" style="height: 90%;">
+                                <div class="bar-tooltip">$32,700</div>
+                            </div>
+                            <span class="bar-label">Jun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>Vendor Share</h3>
+                    <div class="donut-container">
+                        <div class="donut-chart">
+                            <div class="donut-inner">
+                                <span>Total Value</span>
+                                <h4>$118.8k</h4>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div>
+                                    <span class="legend-color" style="background: #2563eb;"></span>
+                                    ABC Tech (55%)
+                                </div>
+                                <strong>$65.3k</strong>
+                            </div>
+                            <div class="legend-item">
+                                <div>
+                                    <span class="legend-color" style="background: #10b981;"></span>
+                                    XYZ Supplies (25%)
+                                </div>
+                                <strong>$29.7k</strong>
+                            </div>
+                            <div class="legend-item">
+                                <div>
+                                    <span class="legend-color" style="background: #f59e0b;"></span>
+                                    Global Elec (20%)
+                                </div>
+                                <strong>$23.8k</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h2 class="section-title">Saved & Generated Reports</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Report Name</th>
+                            <th>Type</th>
+                            <th>Period</th>
+                            <th>Generated Date</th>
+                            <th>File Size</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <tr>
+                            <td><strong>monthly_expenditure_june_2026.csv</strong></td>
+                            <td>Expenditure Analysis</td>
+                            <td>01 Jun - 06 Jun 2026</td>
+                            <td>06 Jun 2026</td>
+                            <td>24.5 KB</td>
+                            <td>
+                                <button class="btn btn-outline" onclick="downloadReport('monthly_expenditure_june_2026.csv')">Download</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>vendor_performance_q2_2026.pdf</strong></td>
+                            <td>Vendor Performance</td>
+                            <td>01 Apr - 06 Jun 2026</td>
+                            <td>05 Jun 2026</td>
+                            <td>1.2 MB</td>
+                            <td>
+                                <button class="btn btn-outline" onclick="downloadReport('vendor_performance_q2_2026.pdf')">Download</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>rfq_conversion_ytd.csv</strong></td>
+                            <td>RFQ Summary</td>
+                            <td>01 Jan - 06 Jun 2026</td>
+                            <td>01 Jun 2026</td>
+                            <td>128.4 KB</td>
+                            <td>
+                                <button class="btn btn-outline" onclick="downloadReport('rfq_conversion_ytd.csv')">Download</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Spinner Loading Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; font-weight: 600; color: #0f172a;">Compiling Analytics Data...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">📊</span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        function generateReport() {
+            const type = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            
+            // Show loading spinner
+            const spinner = document.getElementById('spinnerOverlay');
+            spinner.classList.add('active');
+
+            setTimeout(() => {
+                spinner.classList.remove('active');
+                
+                // Add new report to table
+                const name = `${type.toLowerCase().replace(/ /g, '_')}_${period.toLowerCase().replace(/ /g, '_')}_${Math.floor(Math.random() * 1000)}.csv`;
+                const today = new Date();
+                const formattedDate = `${today.getDate()} Jun 2026`;
+                
+                const tbody = document.getElementById('reportsTableBody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><strong>${name}</strong></td>
+                    <td>${type}</td>
+                    <td>${period}</td>
+                    <td>${formattedDate}</td>
+                    <td>${(Math.random() * 50 + 10).toFixed(1)} KB</td>
+                    <td>
+                        <button class="btn btn-outline" onclick="downloadReport('${name}')">Download</button>
+                    </td>
+                `;
+                tbody.insertBefore(newRow, tbody.firstChild);
+
+                // Show success toast
+                showToast(`New ${type} generated for ${period}.`);
+            }, 1500);
+        }
+
+        function downloadReport(name) {
+            showToast(`Downloading file: ${name}...`);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

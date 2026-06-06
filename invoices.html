@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorBridge ERP - Invoices</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: auto;
+        }
+
+        .logo {
+            padding: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .menu {
+            padding: 20px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .menu a:hover, .menu a.active {
+            background: #2563eb;
+        }
+
+        .menu a.active {
+            font-weight: 600;
+        }
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .navbar {
+            background: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        }
+
+        .search {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .profile {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .card h1 {
+            font-size: 32px;
+            color: #2563eb;
+        }
+
+        .section-title {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #0f172a;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            margin-bottom: 30px;
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #334155;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .paid {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .unpaid {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .overdue {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #2563eb;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1200;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .menu a {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .main {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            VendorBridge
+        </div>
+
+        <div class="menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="vendor.html">🏢 Vendors</a>
+            <a href="rfq.html">📄 RFQs</a>
+            <a href="#">💰 Quotations</a>
+            <a href="approvals.html">✅ Approvals</a>
+            <a href="purchase-orders.html">🛒 Purchase Orders</a>
+            <a href="invoices.html" class="active">🧾 Invoices</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="notifications.html">🔔 Notifications</a>
+            <a href="#">⚙ Settings</a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <div class="navbar">
+            <input type="text" class="search" placeholder="Search invoices...">
+            <div class="profile">
+                Admin User
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h1 class="page-title">Invoice Management</h1>
+                <button class="btn btn-primary" onclick="openModal()">+ Create Invoice</button>
+            </div>
+
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Invoices</h3>
+                    <h1 id="totalInvoices">5</h1>
+                </div>
+                <div class="card">
+                    <h3>Paid Invoices</h3>
+                    <h1 id="paidInvoices">3</h1>
+                </div>
+                <div class="card">
+                    <h3>Unpaid Invoices</h3>
+                    <h1 id="unpaidInvoices">1</h1>
+                </div>
+                <div class="card">
+                    <h3>Overdue Invoices</h3>
+                    <h1 id="overdueInvoices">1</h1>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h2 class="section-title">Invoice Registry</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice Number</th>
+                            <th>Vendor</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                        <tr id="inv-INV-2026-001">
+                            <td><strong>INV-2026-001</strong></td>
+                            <td>ABC Technologies</td>
+                            <td>01 Jun 2026</td>
+                            <td>15 Jun 2026</td>
+                            <td>$15,000</td>
+                            <td><span class="status unpaid" id="status-INV-2026-001">Unpaid</span></td>
+                            <td class="action-cell">
+                                <button class="btn btn-outline" onclick="payInvoice('INV-2026-001')">Pay Now</button>
+                            </td>
+                        </tr>
+                        <tr id="inv-INV-2026-002">
+                            <td><strong>INV-2026-002</strong></td>
+                            <td>XYZ Supplies</td>
+                            <td>15 May 2026</td>
+                            <td>30 May 2026</td>
+                            <td>$1,250</td>
+                            <td><span class="status overdue" id="status-INV-2026-002">Overdue</span></td>
+                            <td class="action-cell">
+                                <button class="btn btn-outline" onclick="payInvoice('INV-2026-002', true)">Pay Now</button>
+                            </td>
+                        </tr>
+                        <tr id="inv-INV-2026-003">
+                            <td><strong>INV-2026-003</strong></td>
+                            <td>Global Electronics</td>
+                            <td>04 Jun 2026</td>
+                            <td>18 Jun 2026</td>
+                            <td>$8,400</td>
+                            <td><span class="status paid">Paid</span></td>
+                            <td class="action-cell">
+                                <span style="color: #64748b; font-size: 13px;">Cleared</span>
+                            </td>
+                        </tr>
+                        <tr id="inv-INV-2026-004">
+                            <td><strong>INV-2026-004</strong></td>
+                            <td>ABC Technologies</td>
+                            <td>05 Jun 2026</td>
+                            <td>20 Jun 2026</td>
+                            <td>$5,200</td>
+                            <td><span class="status paid">Paid</span></td>
+                            <td class="action-cell">
+                                <span style="color: #64748b; font-size: 13px;">Cleared</span>
+                            </td>
+                        </tr>
+                        <tr id="inv-INV-2026-005">
+                            <td><strong>INV-2026-005</strong></td>
+                            <td>XYZ Supplies</td>
+                            <td>06 Jun 2026</td>
+                            <td>21 Jun 2026</td>
+                            <td>$2,850</td>
+                            <td><span class="status paid">Paid</span></td>
+                            <td class="action-cell">
+                                <span style="color: #64748b; font-size: 13px;">Cleared</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal overlay for creating Invoice -->
+    <div id="invoiceModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title">Record New Invoice</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="invoiceForm" onsubmit="handleCreateInvoice(event)">
+                <div class="form-group">
+                    <label for="invVendor">Select Vendor</label>
+                    <select id="invVendor" required>
+                        <option value="ABC Technologies">ABC Technologies</option>
+                        <option value="XYZ Supplies">XYZ Supplies</option>
+                        <option value="Global Electronics">Global Electronics</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="invDate">Issue Date</label>
+                    <input type="date" id="invDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="invDue">Due Date</label>
+                    <input type="date" id="invDue" required>
+                </div>
+                <div class="form-group">
+                    <label for="invAmount">Total Amount ($)</label>
+                    <input type="number" id="invAmount" min="1" step="any" placeholder="Enter Invoice Amount" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Record Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastIcon"></span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        let totalCount = 5;
+        let paidCount = 3;
+        let unpaidCount = 1;
+        let overdueCount = 1;
+
+        // Set default dates
+        document.getElementById('invDate').valueAsDate = new Date();
+        const nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() + 14); // 14 days net term
+        document.getElementById('invDue').valueAsDate = nextWeek;
+
+        function openModal() {
+            document.getElementById('invoiceModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('invoiceModal').classList.remove('active');
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target.id === 'invoiceModal') {
+                closeModal();
+            }
+        }
+
+        function handleCreateInvoice(e) {
+            e.preventDefault();
+            const vendor = document.getElementById('invVendor').value;
+            const issueDate = formatDate(document.getElementById('invDate').value);
+            const dueDate = formatDate(document.getElementById('invDue').value);
+            const amount = parseFloat(document.getElementById('invAmount').value);
+
+            totalCount++;
+            unpaidCount++;
+
+            const invId = 'INV-2026-00' + totalCount;
+
+            // Add row to table
+            const tbody = document.getElementById('invoiceTableBody');
+            const newRow = document.createElement('tr');
+            newRow.id = `inv-${invId}`;
+            newRow.innerHTML = `
+                <td><strong>${invId}</strong></td>
+                <td>${vendor}</td>
+                <td>${issueDate}</td>
+                <td>${dueDate}</td>
+                <td>$${amount.toLocaleString()}</td>
+                <td><span class="status unpaid" id="status-${invId}">Unpaid</span></td>
+                <td class="action-cell">
+                    <button class="btn btn-outline" onclick="payInvoice('${invId}')">Pay Now</button>
+                </td>
+            `;
+
+            tbody.insertBefore(newRow, tbody.firstChild);
+
+            updateStats();
+            closeModal();
+            document.getElementById('invoiceForm').reset();
+            
+            // Re-set default dates
+            document.getElementById('invDate').valueAsDate = new Date();
+            document.getElementById('invDue').valueAsDate = nextWeek;
+
+            showToast('🧾', `Invoice ${invId} recorded successfully.`);
+        }
+
+        function payInvoice(id, wasOverdue = false) {
+            const statusSpan = document.getElementById('status-' + id);
+            statusSpan.className = 'status paid';
+            statusSpan.innerText = 'Paid';
+
+            // Remove action button
+            const row = document.getElementById('inv-' + id);
+            const actionCell = row.querySelector('.action-cell');
+            actionCell.innerHTML = '<span style="color: #64748b; font-size: 13px;">Cleared</span>';
+
+            paidCount++;
+            if (wasOverdue) {
+                overdueCount--;
+            } else {
+                unpaidCount--;
+            }
+
+            updateStats();
+            showToast('✅', `Invoice ${id} paid successfully.`);
+        }
+
+        function updateStats() {
+            document.getElementById('totalInvoices').innerText = totalCount;
+            document.getElementById('paidInvoices').innerText = paidCount;
+            document.getElementById('unpaidInvoices').innerText = unpaidCount;
+            document.getElementById('overdueInvoices').innerText = overdueCount;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function showToast(icon, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').innerText = icon;
+            document.getElementById('toastMsg').innerText = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

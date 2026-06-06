@@ -20,6 +20,59 @@
         body {
             background: #f4f7fc;
             display: flex;
+            min-height: 100vh;
+        }
+
+        #loginPage {
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        #loginPage h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        #loginPage input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        #loginPage input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        #loginPage button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #loginPage button:hover {
+            background: #1d4ed8;
         }
 
         .sidebar {
@@ -230,25 +283,14 @@
 
 <body>
     <div id="loginPage">
+        <h2>VendorBridge Login</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
 
-<<<<<<< HEAD
-    <div class="sidebar">
-=======
-<h2>VendorBridge Login</h2>
-
-<input type="email" id="email" placeholder="Email">
-<br><br>
-
-<input type="password" id="password" placeholder="Password">
-<br><br>
-
-<button onclick="login()">Login</button>
-
-</div>
-
-<div id="dashboard" style="display:none;">
-<div class="sidebar">
->>>>>>> 1b1d83c1e273e4e72bc93d4b9cac59d430a9a0b9
+    <div id="dashboard" style="display:none; width: 100%;">
+        <div class="sidebar">
 
         <div class="logo">
             VendorBridge
@@ -258,12 +300,12 @@
             <a href="dashboard.html">📊 Dashboard</a>
             <a href="vendor.html">🏢 Vendors</a>
             <a href="rfq.html">📄 RFQs</a>
-            <a href="#">💰 Quotations</a>
-            <a href="#">✅ Approvals</a>
-            <a href="#">🛒 Purchase Orders</a>
-            <a href="#">🧾 Invoices</a>
-            <a href="#">📈 Reports</a>
-            <a href="#">🔔 Notifications</a>
+            <a href="Quo">💰 Quotations</a>
+            <a href="approvals.html">✅ Approvals</a>
+            <a href="purchase-orders.html">🛒 Purchase Orders</a>
+            <a href="invoices.html">🧾 Invoices</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="notifications.html">🔔 Notifications</a>
             <a href="#">⚙ Settings</a>
         </div>
 
@@ -424,42 +466,21 @@
 
         </div>
 
-<<<<<<< HEAD
+        </div>
     </div>
 
-</body>
+    <script>
+        function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
 
-</html>
-=======
-</div>
-</div>
-
-<script>
-
-function login(){
-
-let email =
-document.getElementById("email").value;
-
-let password =
-document.getElementById("password").value;
-
-if(email && password){
-
-document.getElementById("loginPage").style.display="none";
-
-document.getElementById("dashboard").style.display="block";
-
-}else{
-
-alert("Please enter Email and Password");
-
-}
-
-}
-
-</script>
-
+            if (email && password) {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+            } else {
+                alert("Please enter Email and Password");
+            }
+        }
+    </script>
 </body>
 </html>
->>>>>>> 1b1d83c1e273e4e72bc93d4b9cac59d430a9a0b9
