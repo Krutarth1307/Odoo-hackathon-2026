@@ -375,6 +375,204 @@
                 width: calc(100% - 80px);
             }
         }
+        /* Profile Dropdown Styling */
+        .profile-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 280px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+            border: 1px solid #e2e8f0;
+            margin-top: 10px;
+            z-index: 1100;
+            display: none;
+            overflow: hidden;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        body.dark-mode .profile-dropdown {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .profile-dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        body.dark-mode .profile-dropdown-header {
+            border-bottom-color: #334155;
+            background: #1e293b;
+        }
+
+        .profile-dropdown-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .profile-dropdown-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .profile-dropdown-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        body.dark-mode .profile-dropdown-name {
+            color: #f8fafc;
+        }
+
+        .profile-dropdown-email {
+            font-size: 12px;
+            color: #64748b;
+            margin: 2px 0 0 0;
+            line-height: 1.2;
+        }
+
+        body.dark-mode .profile-dropdown-email {
+            color: #94a3b8;
+        }
+
+        .profile-dropdown-body {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        body.dark-mode .profile-dropdown-body {
+            border-bottom-color: #334155;
+        }
+
+        .profile-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .profile-detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #64748b;
+        }
+
+        body.dark-mode .detail-label {
+            color: #94a3b8;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #334155;
+        }
+
+        body.dark-mode .detail-value {
+            color: #cbd5e1;
+        }
+
+        .detail-value.badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        body.dark-mode .detail-value.badge {
+            background: rgba(22, 101, 52, 0.2);
+            color: #4ade80;
+        }
+
+        .profile-dropdown-footer {
+            padding: 12px 20px;
+            background: #f8fafc;
+            display: flex;
+            gap: 10px;
+        }
+
+        body.dark-mode .profile-dropdown-footer {
+            background: #0f172a;
+        }
+
+        .profile-dropdown-btn {
+            flex: 1;
+            padding: 8px 0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-settings {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-settings:hover {
+            background: #cbd5e1;
+        }
+
+        body.dark-mode .btn-settings {
+            background: #334155;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .btn-settings:hover {
+            background: #475569;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
     </style>
 </head>
 
@@ -602,6 +800,73 @@
                 toast.classList.remove('show');
             }, 3000);
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Sync User Profile & Init Dropdown
+            const storedUsername = localStorage.getItem('username') || 'Admin User';
+            const storedEmail = localStorage.getItem('useremail') || 'admin@vendorbridge.com';
+            const profileNameEl = document.getElementById('profileName');
+            const profileAvatarEl = document.getElementById('profileAvatar');
+            if (profileNameEl) profileNameEl.innerText = storedUsername;
+            if (profileAvatarEl) profileAvatarEl.innerText = storedUsername.charAt(0).toUpperCase();
+
+            const profileContainer = document.querySelector(".profile-container");
+            if (profileContainer) {
+                const dropdown = document.createElement("div");
+                dropdown.className = "profile-dropdown";
+                dropdown.innerHTML = `
+                    <div class="profile-dropdown-header">
+                        <div class="profile-dropdown-avatar">${storedUsername.charAt(0).toUpperCase()}</div>
+                        <div class="profile-dropdown-info">
+                            <h4 class="profile-dropdown-name">${storedUsername}</h4>
+                            <p class="profile-dropdown-email">${storedEmail}</p>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown-body">
+                        <div class="profile-detail-row">
+                            <span class="detail-label">Role</span>
+                            <span class="detail-value badge">Administrator</span>
+                        </div>
+                        <div class="profile-detail-row">
+                            <span class="detail-label">Department</span>
+                            <span class="detail-value">Procurement</span>
+                        </div>
+                        <div class="profile-detail-row">
+                            <span class="detail-label">Access Level</span>
+                            <span class="detail-value">Full Access</span>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown-footer">
+                        <a href="settings.html" class="profile-dropdown-btn btn-settings">Settings</a>
+                        <button class="profile-dropdown-btn btn-logout">Sign Out</button>
+                    </div>
+                `;
+                profileContainer.appendChild(dropdown);
+
+                profileContainer.onclick = (e) => {
+                    if (e.target.closest(".profile-dropdown")) return;
+                    const isVisible = dropdown.style.display === "block";
+                    dropdown.style.display = isVisible ? "none" : "block";
+                    e.stopPropagation();
+                };
+
+                const logoutBtn = dropdown.querySelector(".btn-logout");
+                if (logoutBtn) {
+                    logoutBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        localStorage.removeItem('username');
+                        localStorage.removeItem('useremail');
+                        window.location.href = "main.html";
+                    });
+                }
+            }
+
+            // Close dropdown on click outside
+            document.addEventListener("click", () => {
+                const dropdown = document.querySelector(".profile-dropdown");
+                if (dropdown) dropdown.style.display = "none";
+            });
+        });
     </script>
 </body>
 
