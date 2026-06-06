@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorBridge ERP - Settings</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #f4f7fc;
+            --card-bg: white;
+            --text-color: #334155;
+            --title-color: #0f172a;
+            --border-color: #e2e8f0;
+            --input-bg: white;
+        }
+
+        .dark-mode-vars {
+            --bg-color: #0b0f19;
+            --card-bg: #1e293b;
+            --text-color: #cbd5e1;
+            --title-color: #f8fafc;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .menu {
+            padding: 20px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .menu a:hover, .menu a.active {
+            background: #2563eb;
+        }
+
+        .menu a.active {
+            font-weight: 600;
+        }
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .profile {
+            font-weight: 600;
+            color: var(--title-color);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: var(--title-color);
+            font-weight: 700;
+        }
+
+        /* Settings Tabs and Card */
+        .settings-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            min-height: 500px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .settings-card {
+                grid-template-columns: 1fr;
+            }
+            .settings-nav {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+
+        .settings-nav {
+            background: rgba(0, 0, 0, 0.02);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .settings-nav-btn {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .settings-nav-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .settings-nav-btn:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-pane {
+            padding: 40px;
+            display: none;
+        }
+
+        .settings-pane.active {
+            display: block;
+        }
+
+        .pane-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--title-color);
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            max-width: 500px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--title-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, background 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #2563eb;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 500px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--title-color);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2563eb;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2563eb;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1200;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .menu a {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .main {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            VendorBridge
+        </div>
+
+        <div class="menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="vendor.html">🏢 Vendors</a>
+            <a href="rfq.html">📄 RFQs</a>
+            <a href="Quotation.html">💰 Quotations</a>
+            <a href="approvals.html">✅ Approvals</a>
+            <a href="purchase-orders.html">🛒 Purchase Orders</a>
+            <a href="invoices.html">🧾 Invoices</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="notifications.html">🔔 Notifications</a>
+            <a href="settings.html" class="active">⚙ Settings</a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <div class="navbar">
+            <div></div> <!-- Spacer -->
+            <div class="profile">
+                Admin User
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="page-header">
+                <h1 class="page-title">Settings</h1>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-nav">
+                    <button class="settings-nav-btn active" onclick="switchTab('general', this)">🏢 General</button>
+                    <button class="settings-nav-btn" onclick="switchTab('appearance', this)">🎨 Appearance</button>
+                    <button class="settings-nav-btn" onclick="switchTab('notifications', this)">🔔 Notifications</button>
+                    <button class="settings-nav-btn" onclick="switchTab('security', this)">🔒 Security</button>
+                </div>
+
+                <div class="settings-content">
+                    <!-- General Settings Pane -->
+                    <div id="general" class="settings-pane active">
+                        <h2 class="pane-title">General Company Settings</h2>
+                        <form onsubmit="saveSettings(event)">
+                            <div class="form-group">
+                                <label for="compName">Company Name</label>
+                                <input type="text" id="compName" value="VendorBridge Corporation">
+                            </div>
+                            <div class="form-group">
+                                <label for="gstNumber">Company GSTIN</label>
+                                <input type="text" id="gstNumber" value="24ABCDE1234F1Z5">
+                            </div>
+                            <div class="form-group">
+                                <label for="currency">Base Currency</label>
+                                <select id="currency">
+                                    <option value="USD" selected>USD ($) - US Dollar</option>
+                                    <option value="INR">INR (₹) - Indian Rupee</option>
+                                    <option value="EUR">EUR (€) - Euro</option>
+                                    <option value="GBP">GBP (£) - British Pound</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fiscalYear">Fiscal Year Start</label>
+                                <select id="fiscalYear">
+                                    <option value="April" selected>April</option>
+                                    <option value="January">January</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Appearance Pane -->
+                    <div id="appearance" class="settings-pane">
+                        <h2 class="pane-title">Appearance & Styling</h2>
+                        
+                        <div class="toggle-container">
+                            <span class="toggle-label">Dark Theme Mode</span>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle" onchange="handleDarkModeChange()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-container" style="margin-bottom: 25px;">
+                            <span class="toggle-label">Compact Sidebar View</span>
+                            <label class="switch">
+                                <input type="checkbox" id="compactSidebar">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <button onclick="saveSettingsDirect()" class="btn btn-primary">Save Preferences</button>
+                    </div>
+
+                    <!-- Notifications Pane -->
+                    <div id="notifications" class="settings-pane">
+                        <h2 class="pane-title">Notification Channels</h2>
+                        
+                        <div class="toggle-container">
+                            <span class="toggle-label">Email Alerts for RFQ Quotes</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-container">
+                            <span class="toggle-label">Email Alerts for Overdue Invoices</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-container">
+                            <span class="toggle-label">SMS Status Alerts for Approved POs</span>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-container" style="margin-bottom: 25px;">
+                            <span class="toggle-label">Receive Push Notifications</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <button onclick="saveSettingsDirect()" class="btn btn-primary">Save Preferences</button>
+                    </div>
+
+                    <!-- Security Pane -->
+                    <div id="security" class="settings-pane">
+                        <h2 class="pane-title">Security Settings</h2>
+                        <form onsubmit="saveSettings(event)">
+                            <div class="form-group">
+                                <label for="currPassword">Current Password</label>
+                                <input type="password" id="currPassword" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="confPassword">Confirm Password</label>
+                                <input type="password" id="confPassword" placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">⚙</span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode-vars');
+            document.getElementById('darkModeToggle').checked = true;
+        }
+
+        function switchTab(paneId, btn) {
+            // Remove active classes
+            const btns = document.querySelectorAll('.settings-nav-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const panes = document.querySelectorAll('.settings-pane');
+            panes.forEach(p => p.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+        }
+
+        function handleDarkModeChange() {
+            const toggle = document.getElementById('darkModeToggle');
+            if (toggle.checked) {
+                document.body.classList.add('dark-mode-vars');
+                localStorage.setItem('darkMode', 'enabled');
+                showToast("Dark Mode Enabled");
+            } else {
+                document.body.classList.remove('dark-mode-vars');
+                localStorage.setItem('darkMode', 'disabled');
+                showToast("Dark Mode Disabled");
+            }
+        }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            showToast("Settings saved successfully.");
+        }
+
+        function saveSettingsDirect() {
+            showToast("Preferences updated.");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>
