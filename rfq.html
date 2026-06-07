@@ -187,6 +187,7 @@ Create RFQ
 </div>
 
 <script>
+<<<<<<< HEAD
     const API = '';
     let allVendors = [];
 
@@ -286,5 +287,48 @@ Create RFQ
     document.addEventListener('DOMContentLoaded', loadData);
 </script>
 
+=======
+// Load vendors from API into checkboxes
+async function loadVendors() {
+    try {
+        const res = await fetch('http://127.0.0.1:3000/vendors');
+        const vendors = await res.json();
+        const vendorBox = document.querySelector('.form-group:nth-child(6) div:last-child');
+        vendorBox.innerHTML = '';
+        vendors.forEach(v => {
+            vendorBox.innerHTML += `
+                <div class="vendor-box">
+                    <input type="checkbox" value="${v.id}"> ${v.vendor_name}
+                </div>`;
+        });
+    } catch(e) { console.error(e); }
+}
+
+// Submit RFQ to API
+document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const data = {
+        title: document.querySelectorAll('input[type=text]')[0].value,
+        description: document.querySelectorAll('textarea')[0].value,
+        quantity: document.querySelector('input[type=number]').value,
+        deadline: document.querySelector('input[type=date]').value,
+        status: 'OPEN',
+        created_by: 1
+    };
+    try {
+        const res = await fetch('http://127.0.0.1:3000/rfqs', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if(result.success) alert('RFQ Created Successfully! ✅');
+    } catch(e) { console.error(e); }
+});
+
+loadVendors();
+</script>
+        
+>>>>>>> 6ec225a4f9762576ccbe31d535006fb430d6cd17
 </body>
 </html>

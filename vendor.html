@@ -105,6 +105,7 @@ color:green;
     <tbody id="vendorsBody"></tbody>
 </table>
 
+<<<<<<< HEAD
 <!-- Vendor Modal -->
 <div class="modal" id="vendorModal">
     <div class="modal-content">
@@ -247,6 +248,36 @@ color:green;
     });
 
     document.addEventListener('DOMContentLoaded', renderVendors);
+=======
+<script>
+async function loadVendors() {
+    try {
+        const response = await fetch('http://127.0.0.1:3000/vendors');
+        const vendors = await response.json();
+        
+        const table = document.querySelector('table');
+        // Remove hardcoded rows (keep header)
+        const header = table.querySelector('tr');
+        table.innerHTML = '';
+        table.appendChild(header);
+        
+        vendors.forEach(v => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${v.vendor_name}</td>
+                <td>${v.category}</td>
+                <td>${v.gst_number}</td>
+                <td><span class="status">${v.status}</span></td>
+                <td><button>View</button></td>
+            `;
+            table.appendChild(row);
+        });
+    } catch(error) {
+        console.error('Vendor API Error:', error);
+    }
+}
+loadVendors();
+>>>>>>> 6ec225a4f9762576ccbe31d535006fb430d6cd17
 </script>
 
 </body>

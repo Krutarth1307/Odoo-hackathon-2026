@@ -1242,6 +1242,45 @@
             });
         });
     </script>
+    <script>
+async function loadPurchaseOrders() {
+    try {
+        const res = await fetch('http://127.0.0.1:3000/purchase-orders');
+        const orders = await res.json();
+
+        // Update stats cards
+        const total = orders.length;
+        const pending = orders.filter(o => o.status === 'CREATED').length;
+        const received = orders.filter(o => o.status === 'COMPLETED').length;
+
+        document.getElementById('totalPO').innerText = total;
+        document.getElementById('pendingPO').innerText = pending;
+        document.getElementById('receivedPO').innerText = received;
+
+        // Load real rows into table
+        const tbody = document.getElementById('poTableBody');
+        tbody.innerHTML = '';
+        orders.forEach(po => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${po.po_number}</strong></td>
+                    <td>Quotation #${po.quotation_id}</td>
+                    <td>${po.po_date || '-'}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="status ${po.status === 'COMPLETED' ? 'received' : 'pending'}">${po.status}</span></td>
+                    <td class="action-cell">
+                        <button class="btn btn-outline">View</button>
+                    </td>
+                </tr>`;
+        });
+    } catch(e) {
+        console.error('Purchase Orders API error:', e);
+    }
+}
+loadPurchaseOrders();
+</script>
+    
 </body>
 
 </html>

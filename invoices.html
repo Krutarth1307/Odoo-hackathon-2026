@@ -1212,6 +1212,47 @@
             });
         });
     </script>
+
+    <script>
+async function loadInvoices() {
+    try {
+        const res = await fetch('http://127.0.0.1:3000/invoices');
+        const invoices = await res.json();
+
+        // Update stats cards
+        const total = invoices.length;
+        const paid = invoices.filter(i => i.status === 'PAID').length;
+        const unpaid = invoices.filter(i => i.status === 'UNPAID').length;
+
+        document.getElementById('totalInvoices').innerText = total;
+        document.getElementById('paidInvoices').innerText = paid;
+        document.getElementById('unpaidInvoices').innerText = unpaid;
+        document.getElementById('overdueInvoices').innerText = total - paid - unpaid;
+
+        // Load real rows into table
+        const tbody = document.getElementById('invoiceTableBody');
+        tbody.innerHTML = '';
+        invoices.forEach(inv => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${inv.invoice_number}</strong></td>
+                    <td>Vendor #${inv.po_id}</td>
+                    <td>${inv.created_at ? inv.created_at.split('T')[0] : '-'}</td>
+                    <td>-</td>
+                    <td>₹${Number(inv.total).toLocaleString()}</td>
+                    <td><span class="status ${inv.status.toLowerCase()}">${inv.status}</span></td>
+                    <td class="action-cell">
+                        <button class="btn btn-outline">View</button>
+                    </td>
+                </tr>`;
+        });
+    } catch(e) {
+        console.error('Invoices API error:', e);
+    }
+}
+loadInvoices();
+</script>
+    
 </body>
 
 </html>
