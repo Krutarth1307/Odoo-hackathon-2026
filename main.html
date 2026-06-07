@@ -812,22 +812,22 @@
 
                 <div class="card">
                     <h3>Total Vendors</h3>
-                    <h1>125</h1>
+                    <h1 id="statVendors">—</h1>
                 </div>
 
                 <div class="card">
                     <h3>Active RFQs</h3>
-                    <h1>42</h1>
+                    <h1 id="statRFQs">—</h1>
                 </div>
 
                 <div class="card">
                     <h3>Pending Approvals</h3>
-                    <h1>18</h1>
+                    <h1 id="statPending">—</h1>
                 </div>
 
                 <div class="card">
                     <h3>Total Invoices</h3>
-                    <h1>63</h1>
+                    <h1 id="statInvoices">—</h1>
                 </div>
 
             </div>
@@ -851,7 +851,6 @@
                 </h2>
 
                 <table>
-
                     <tr>
                         <th>Vendor Name</th>
                         <th>Category</th>
@@ -859,31 +858,7 @@
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
-
-                    <tr>
-                        <td>Infosys Limited</td>
-                        <td>IT Hardware & Software Services</td>
-                        <td>29AAACI3946F1ZT</td>
-                        <td><span class="status active">Active</span></td>
-                        <td><button class="btn">View</button></td>
-                    </tr>
-
-                    <tr>
-                        <td>Godrej Interio</td>
-                        <td>Office Furniture & Stationery</td>
-                        <td>27AAACG0629Q1ZA</td>
-                        <td><span class="status pending">Pending</span></td>
-                        <td><button class="btn">View</button></td>
-                    </tr>
-
-                    <tr>
-                        <td>Reliance Digital (Croma)</td>
-                        <td>Consumer Electronics & Appliances</td>
-                        <td>27AABCR6073G1ZA</td>
-                        <td><span class="status active">Active</span></td>
-                        <td><button class="btn">View</button></td>
-                    </tr>
-
+                    <tbody id="vendorTableBody"><tr><td colspan="5" style="text-align:center;color:#94a3b8;">Loading…</td></tr></tbody>
                 </table>
 
             </div>
@@ -947,33 +922,237 @@
 
             </div>
 
+        <!-- Resources Section -->
+        <section class="resources-section" style="margin-top: 30px;">
+            <h2 class="section-title">Resources Management</h2>
+            <button class="btn btn-primary" id="addResourceBtn" style="margin-bottom: 15px;">Add New Resource</button>
+            <table class="resource-table" id="resourcesTable" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 8px; text-align: left;">ID</th>
+                        <th style="padding: 8px; text-align: left;">Name</th>
+                        <th style="padding: 8px; text-align: left;">Email</th>
+                        <th style="padding: 8px; text-align: left;">Role</th>
+                        <th style="padding: 8px; text-align: left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="resourcesBody"></tbody>
+            </table>
+        </section>
+
+        <!-- Edit / Add Modal -->
+        <div class="modal" id="resourceModal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h3 id="modalTitle">Edit Resource</h3>
+                <form id="resourceForm">
+                    <input type="hidden" id="resourceId" />
+                    <div class="form-group">
+                        <label for="resourceName">Name</label>
+                        <input type="text" id="resourceName" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="resourceEmail">Email</label>
+                        <input type="email" id="resourceEmail" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="resourceRole">Role</label>
+                        <select id="resourceRole" required>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="OFFICER">OFFICER</option>
+                            <option value="MANAGER">MANAGER</option>
+                            <option value="VENDOR">VENDOR</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+
+        <style>
+            .resource-table th, .resource-table td { border: 1px solid #e2e8f0; padding: 8px; }
+            .resource-table tr:nth-child(even) { background: #f8fafc; }
+            .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+            .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; position: relative; }
+            .close { position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 20px; }
+            .form-group { margin-bottom: 12px; }
+            .form-group label { display: block; margin-bottom: 4px; font-weight: 500; }
+            .form-group input, .form-group select { width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        </style>
+
+        <script>
+            // ── API base URL (same origin since server serves static files) ──
+            const API = '';
+
+            // ── Render Resources from API ─────────────────────────────────
+            async function renderResources() {
+                try {
+                    const res = await fetch(`${API}/api/users`);
+                    const users = await res.json();
+                    const tbody = document.getElementById('resourcesBody');
+                    tbody.innerHTML = '';
+                    users.forEach(u => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${u.id}</td>
+                            <td>${u.name}</td>
+                            <td>${u.email}</td>
+                            <td>${u.role}</td>
+                            <td>
+                                <button class="btn btn-outline" onclick="openEdit(${u.id},'${u.name}','${u.email}','${u.role}')">Edit</button>
+                                <button class="btn btn-outline" onclick="removeResource(${u.id})" style="margin-left:4px;">Delete</button>
+                            </td>`;
+                        tbody.appendChild(tr);
+                    });
+                } catch(e) {
+                    document.getElementById('resourcesBody').innerHTML =
+                        '<tr><td colspan="5" style="color:#ef4444;text-align:center;">⚠ Could not load users — is the server running?</td></tr>';
+                }
+            }
+
+            function openEdit(id, name, email, role) {
+                document.getElementById('modalTitle').innerText = 'Edit Resource';
+                document.getElementById('resourceId').value = id;
+                document.getElementById('resourceName').value = name;
+                document.getElementById('resourceEmail').value = email;
+                document.getElementById('resourceRole').value = role;
+                document.getElementById('resourceModal').style.display = 'flex';
+            }
+
+            function openAdd() {
+                document.getElementById('modalTitle').innerText = 'Add New Resource';
+                document.getElementById('resourceId').value = '';
+                document.getElementById('resourceName').value = '';
+                document.getElementById('resourceEmail').value = '';
+                document.getElementById('resourceRole').value = 'ADMIN';
+                document.getElementById('resourceModal').style.display = 'flex';
+            }
+
+            async function removeResource(id) {
+                if (!confirm('Delete this user?')) return;
+                await fetch(`${API}/api/users/${id}`, { method: 'DELETE' });
+                renderResources();
+            }
+
+            document.getElementById('addResourceBtn').addEventListener('click', openAdd);
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('resourceModal').style.display = 'none';
+            });
+
+            document.getElementById('resourceForm').addEventListener('submit', async e => {
+                e.preventDefault();
+                const idVal   = document.getElementById('resourceId').value;
+                const name    = document.getElementById('resourceName').value.trim();
+                const email   = document.getElementById('resourceEmail').value.trim();
+                const role    = document.getElementById('resourceRole').value;
+
+                if (idVal) {
+                    // Edit existing user
+                    await fetch(`${API}/api/users/${idVal}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, role })
+                    });
+                } else {
+                    // Add new user — password defaults to 'changeme'
+                    await fetch(`${API}/api/users`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password: 'changeme', role })
+                    });
+                }
+                document.getElementById('resourceModal').style.display = 'none';
+                renderResources();
+            });
+
+            document.addEventListener('DOMContentLoaded', renderResources);
+        </script>
         </div>
 
         </div>
     </div>
 
     <script>
-        function login() {
-            let name = document.getElementById("usernameInput").value.trim() || "Admin User";
-            let email = document.getElementById("email").value || "admin@vendorbridge.com";
-            let password = document.getElementById("password").value;
+        // ── API Login ──────────────────────────────────────────────────────
+        async function login() {
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-            if (email && password) {
-                localStorage.setItem('username', name);
-                localStorage.setItem('useremail', email);
+            if (!email || !password) {
+                alert('Please enter Email and Password');
+                return;
+            }
 
-                document.getElementById("loginPage").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-                
-                // Update profile name
-                document.getElementById("profileName").innerText = name;
-                // Update profile avatar letter
-                document.getElementById("profileAvatar").innerText = name.charAt(0).toUpperCase();
+            try {
+                const resp = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await resp.json();
 
-                // Re-initialize dropdown with new name
-                initProfileDropdown();
-            } else {
-                alert("Please enter Email and Password");
+                if (data.success) {
+                    const name = data.user.name;
+                    sessionStorage.setItem('username', name);
+                    sessionStorage.setItem('useremail', data.user.email);
+                    sessionStorage.setItem('userrole',  data.user.role);
+
+                    document.getElementById('loginPage').style.display  = 'none';
+                    document.getElementById('dashboard').style.display  = 'block';
+                    document.getElementById('profileName').innerText    = name;
+                    document.getElementById('profileAvatar').innerText  = name.charAt(0).toUpperCase();
+
+                    initProfileDropdown();
+                    loadDashboardStats();
+                    loadVendorTable();
+                } else {
+                    alert(data.message || 'Invalid credentials');
+                }
+            } catch (err) {
+                alert('⚠ Cannot reach server. Make sure node server.js is running.');
+            }
+        }
+
+        // ── Load Dashboard Stats ───────────────────────────────────────────
+        async function loadDashboardStats() {
+            try {
+                const res  = await fetch('/api/dashboard');
+                const data = await res.json();
+                document.getElementById('statVendors').innerText  = data.totalVendors   ?? '—';
+                document.getElementById('statRFQs').innerText     = data.activeRFQs     ?? '—';
+                document.getElementById('statPending').innerText  = data.pendingApprovals ?? '—';
+                document.getElementById('statInvoices').innerText = data.totalInvoices   ?? '—';
+            } catch(e) {
+                console.warn('Dashboard stats unavailable:', e.message);
+            }
+        }
+
+        // ── Load Vendor Table ─────────────────────────────────────────────
+        async function loadVendorTable() {
+            try {
+                const res     = await fetch('/api/vendors');
+                const vendors = await res.json();
+                const tbody   = document.getElementById('vendorTableBody');
+                if (!vendors.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;">No vendors found</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                vendors.forEach(v => {
+                    const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'PENDING' ? 'pending' : 'approved';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${v.vendor_name}</td>
+                        <td>${v.category || '—'}</td>
+                        <td>${v.gst_number || '—'}</td>
+                        <td><span class="status ${statusClass}">${v.status}</span></td>
+                        <td><button class="btn" onclick="window.location.href='vendor.html'">View</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                document.getElementById('vendorTableBody').innerHTML =
+                    '<tr><td colspan="5" style="color:#ef4444;text-align:center;">⚠ Could not load vendors</td></tr>';
             }
         }
 
@@ -984,8 +1163,8 @@
                 existingDropdown.remove();
             }
 
-            const storedUsername = localStorage.getItem('username') || 'Admin User';
-            const storedEmail = localStorage.getItem('useremail') || 'admin@vendorbridge.com';
+            const storedUsername = sessionStorage.getItem('username') || 'Admin User';
+            const storedEmail = sessionStorage.getItem('useremail') || 'admin@vendorbridge.com';
             const profileNameEl = document.getElementById('profileName');
             const profileAvatarEl = document.getElementById('profileAvatar');
             if (profileNameEl) profileNameEl.innerText = storedUsername;
@@ -1031,30 +1210,33 @@
                     e.stopPropagation();
                 };
 
-                const logoutBtn = dropdown.querySelector(".btn-logout");
+                const logoutBtn = dropdown.querySelector('.btn-logout');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener("click", (e) => {
+                    logoutBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        localStorage.removeItem('username');
-                        localStorage.removeItem('useremail');
-                        document.getElementById("dashboard").style.display = "none";
-                        document.getElementById("loginPage").style.display = "block";
-                        document.getElementById("usernameInput").value = "Admin User";
-                        document.getElementById("email").value = "";
-                        document.getElementById("password").value = "";
-                        dropdown.style.display = "none";
+                        sessionStorage.removeItem('username');
+                        sessionStorage.removeItem('useremail');
+                        sessionStorage.removeItem('userrole');
+                        document.getElementById('dashboard').style.display  = 'none';
+                        document.getElementById('loginPage').style.display  = 'block';
+                        document.getElementById('usernameInput').value = 'Admin User';
+                        document.getElementById('email').value    = '';
+                        document.getElementById('password').value = '';
+                        dropdown.style.display = 'none';
                     });
                 }
             }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Auto-login check
-            const savedName = localStorage.getItem('username');
-            const savedEmail = localStorage.getItem('useremail');
+            // Auto-login check (session-based)
+            const savedName  = sessionStorage.getItem('username');
+            const savedEmail = sessionStorage.getItem('useremail');
             if (savedName && savedEmail) {
-                document.getElementById("loginPage").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboardStats();
+                loadVendorTable();
             }
 
             // Init Profile Dropdown & details

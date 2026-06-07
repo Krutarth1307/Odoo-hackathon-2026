@@ -123,76 +123,59 @@ margin-top:10px;
 
 <h1>Create RFQ</h1>
 
-<form>
+<form id="rfqForm">
 
 <div class="form-group">
 <label>RFQ Title</label>
-<input type="text" placeholder="Enter RFQ Title">
+<input type="text" id="rfqTitle" placeholder="Enter RFQ Title" required>
 </div>
 
 <div class="form-group">
 <label>Product / Service Details</label>
-<textarea placeholder="Describe products or services"></textarea>
+<textarea id="rfqDescription" placeholder="Describe products or services" required></textarea>
 </div>
 
 <div class="row">
 
 <div class="form-group">
 <label>Quantity</label>
-<input type="number" placeholder="Enter Quantity">
+<input type="number" id="rfqQuantity" placeholder="Enter Quantity" required>
 </div>
 
 <div class="form-group">
 <label>Deadline</label>
-<input type="date">
+<input type="date" id="rfqDeadline" required>
 </div>
 
 </div>
 
 <div class="form-group">
-<label>Estimated Budget</label>
-<input type="number" placeholder="Enter Budget">
+<label>Estimated Budget (INR)</label>
+<input type="number" id="rfqBudget" placeholder="Enter Budget">
 </div>
 
 <div class="form-group">
 <label>Vendor Category</label>
-
-<select>
-<option>IT Hardware & Software Services</option>
-<option>Consumer Electronics & Appliances</option>
-<option>Office Furniture & Stationery</option>
-<option>Cloud Infrastructure & Software</option>
-<option>Courier & Transport Services</option>
+<select id="rfqCategory">
+<option value="">-- Select Category --</option>
 </select>
-
 </div>
 
 <div class="form-group">
-
 <label>Select Vendors</label>
-
-<div class="vendor-box">
-<input type="checkbox"> Infosys Limited
+<div id="rfqVendorsList" style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="color: #94a3b8; font-style: italic;">Select a category to filter vendors...</div>
 </div>
-
-<div class="vendor-box">
-<input type="checkbox"> Godrej Interio
-</div>
-
-<div class="vendor-box">
-<input type="checkbox"> Reliance Digital (Croma)
-</div>
-
 </div>
 
 <div class="form-group">
 <label>Upload Attachment</label>
-<input type="file">
+<input type="file" id="rfqAttachment">
 </div>
 
 <div class="form-group">
 <label>Special Instructions</label>
-<textarea placeholder="Any additional requirements"></textarea>
+<textarea id="rfqInstructions" placeholder="Any additional requirements"></textarea>
 </div>
 
 <button type="submit" class="btn">
@@ -202,6 +185,106 @@ Create RFQ
 </form>
 
 </div>
+
+<script>
+    const API = '';
+    let allVendors = [];
+
+    async function loadData() {
+        try {
+            const res = await fetch(`${API}/api/vendors`);
+            allVendors = await res.json();
+            
+            // Extract unique categories
+            const categories = [...new Set(allVendors.map(v => v.category).filter(Boolean))];
+            const select = document.getElementById('rfqCategory');
+            select.innerHTML = '<option value="">-- Select Category --</option>';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat;
+                select.appendChild(opt);
+            });
+
+            // Update vendor list on category change
+            select.addEventListener('change', filterVendors);
+        } catch(e) {
+            console.error('Error loading vendors:', e);
+        }
+    }
+
+    function filterVendors() {
+        const selectedCat = document.getElementById('rfqCategory').value;
+        const container = document.getElementById('rfqVendorsList');
+        container.innerHTML = '';
+
+        const filtered = allVendors.filter(v => !selectedCat || v.category === selectedCat);
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="color: #94a3b8;">No vendors available in this category.</div>';
+            return;
+        }
+
+        filtered.forEach(v => {
+            const div = document.createElement('div');
+            div.className = 'vendor-box';
+            div.innerHTML = `
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                    <input type="checkbox" name="selectedVendors" value="${v.id}">
+                    <span>${v.vendor_name} (${v.gst_number || 'No GST'})</span>
+                </label>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    document.getElementById('rfqForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        
+        const title = document.getElementById('rfqTitle').value.trim();
+        const description = document.getElementById('rfqDescription').value.trim();
+        const quantity = parseInt(document.getElementById('rfqQuantity').value);
+        const deadline = document.getElementById('rfqDeadline').value;
+        
+        // Find checked vendors
+        const checkedBoxes = document.querySelectorAll('input[name="selectedVendors"]:checked');
+        const vendorIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+        if (vendorIds.length === 0) {
+            alert('Please select at least one vendor for this RFQ.');
+            return;
+        }
+
+        const payload = {
+            title,
+            description,
+            quantity,
+            deadline,
+            status: 'OPEN',
+            created_by: 1 // Default to first Admin user
+        };
+
+        try {
+            const res = await fetch(`${API}/api/rfqs`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                alert('RFQ Created Successfully!');
+                window.location.href = 'main.html';
+            } else {
+                alert('Error creating RFQ: ' + data.message);
+            }
+        } catch(e) {
+            alert('Failed to submit RFQ to server.');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadData);
+</script>
 
 </body>
 </html>

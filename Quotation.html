@@ -874,55 +874,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr id="q-QTN-8801">
-                                <td><strong>QTN-8801</strong></td>
-                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
-                                <td>Infosys Limited</td>
-                                <td>05 Jun 2026</td>
-                                <td>₹1,45,000</td>
-                                <td>5 Days</td>
-                                <td><span class="status pending" id="status-QTN-8801">Pending Review</span></td>
-                                <td class="action-cell">
-                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8801', 'RFQ002')">Submit Approval</button>
-                                </td>
-                            </tr>
-                            <tr id="q-QTN-8802">
-                                <td><strong>QTN-8802</strong></td>
-                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
-                                <td>Godrej Interio</td>
-                                <td>06 Jun 2026</td>
-                                <td>₹1,38,000</td>
-                                <td>7 Days</td>
-                                <td><span class="status pending" id="status-QTN-8802">Pending Review</span></td>
-                                <td class="action-cell">
-                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8802', 'RFQ002')">Submit Approval</button>
-                                </td>
-                            </tr>
-                            <tr id="q-QTN-8803">
-                                <td><strong>QTN-8803</strong></td>
-                                <td>RFQ002 - Godrej Ergonomic Mesh Chairs</td>
-                                <td>Reliance Digital (Croma)</td>
-                                <td>06 Jun 2026</td>
-                                <td>₹1,52,000</td>
-                                <td>4 Days</td>
-                                <td><span class="status pending" id="status-QTN-8803">Pending Review</span></td>
-                                <td class="action-cell">
-                                    <button class="btn btn-primary" onclick="submitForApproval('QTN-8803', 'RFQ002')">Submit Approval</button>
-                                </td>
-                            </tr>
-                            <tr id="q-QTN-8790">
-                                <td><strong>QTN-8790</strong></td>
-                                <td>RFQ001 - Lenovo ThinkPad L14 Gen 4</td>
-                                <td>Infosys Limited</td>
-                                <td>03 Jun 2026</td>
-                                <td>₹5,20,000</td>
-                                <td>10 Days</td>
-                                <td><span class="status approved">Approved</span></td>
-                                <td class="action-cell">
-                                    <span style="color: #64748b; font-size: 13px;">Converted to PO</span>
-                                </td>
-                            </tr>
+                        <tbody id="quotationsBody">
+                            <tr><td colspan="8" style="text-align:center;color:#94a3b8;">Loading…</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -954,17 +907,70 @@
     </div>
 
     <script>
-        let pendingCount = 8;
+        const API = '';
+        let allQuotations = [];
 
-        // Auto-switch based on URL Hash
         window.addEventListener('DOMContentLoaded', () => {
             if(window.location.hash === '#compare') {
                 switchPane('compare');
             } else {
                 switchPane('registry');
             }
-            loadComparisonData();
+            loadQuotations();
         });
+
+        async function loadQuotations() {
+            try {
+                const res = await fetch(`${API}/api/quotations`);
+                allQuotations = await res.json();
+                renderQuotationsTable();
+                initCompareSelectors();
+                loadComparisonData();
+            } catch(e) {
+                console.error('Error loading quotations:', e);
+                document.getElementById('quotationsBody').innerHTML = 
+                    '<tr><td colspan="8" style="text-align:center;color:#ef4444;">⚠ Failed to load quotations from API</td></tr>';
+            }
+        }
+
+        function renderQuotationsTable() {
+            const tbody = document.getElementById('quotationsBody');
+            tbody.innerHTML = '';
+
+            if (allQuotations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#94a3b8;">No quotations found.</td></tr>';
+                return;
+            }
+
+            let pendingCount = 0;
+
+            allQuotations.forEach(q => {
+                const isPending = q.status === 'SUBMITTED';
+                if (isPending) pendingCount++;
+
+                const tr = document.createElement('tr');
+                tr.id = `q-${q.id}`;
+                tr.innerHTML = `
+                    <td><strong>QTN-${String(q.id).padStart(4, '0')}</strong></td>
+                    <td>${q.rfq_title || '—'}</td>
+                    <td>${q.vendor_name || '—'}</td>
+                    <td>${q.created_at ? new Date(q.created_at).toLocaleDateString() : '—'}</td>
+                    <td>₹${parseFloat(q.price).toLocaleString()}</td>
+                    <td>${q.delivery_days} Days</td>
+                    <td><span class="status ${q.status.toLowerCase()}" id="status-${q.id}">${q.status}</span></td>
+                    <td class="action-cell">
+                        ${isPending 
+                            ? `<button class="btn btn-primary" onclick="submitForApproval(${q.id}, '${q.rfq_title}')">Submit Approval</button>`
+                            : `<span style="color: #64748b; font-size: 13px;">No action required</span>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const countEl = document.getElementById('pendingCount');
+            if (countEl) countEl.innerText = pendingCount;
+        }
 
         function switchPane(pane) {
             const registryPane = document.getElementById('registryPane');
@@ -979,76 +985,109 @@
                 compareBtn.classList.remove('active');
                 window.location.hash = 'registry';
             } else {
-                registryPane.style.display = 'none';
+                registryPane.style.display = 'block'; // Make comparison easy
                 comparePane.style.display = 'block';
+                registryPane.style.display = 'none';
                 registryBtn.classList.remove('active');
                 compareBtn.classList.add('active');
                 window.location.hash = 'compare';
             }
         }
 
-        function submitForApproval(qtnId, rfqRef) {
-            const badge = document.getElementById('status-' + qtnId);
-            badge.className = 'status approved';
-            badge.innerText = 'Submitted';
-            
-            const row = document.getElementById('q-' + qtnId);
-            const actionCell = row.querySelector('.action-cell');
-            actionCell.innerHTML = '<span style="color: #16a34a; font-size: 13px; font-weight: 600;">Awaiting Approval</span>';
+        async function submitForApproval(qtnId, rfqTitle) {
+            try {
+                // Post an approval request
+                const res = await fetch(`${API}/api/approvals`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        quotation_id: qtnId,
+                        manager_id: 2, // Default Manager user ID
+                        remarks: 'Submitted for manager review'
+                    })
+                });
 
-            pendingCount--;
-            document.getElementById('pendingCount').innerText = pendingCount;
+                // Update quotation status locally
+                await fetch(`${API}/api/quotations/${qtnId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'APPROVED' }) // Moves status to approved/submitted state
+                });
 
-            showToast('✅', `Quotation ${qtnId} for ${rfqRef} submitted to Approvals queue.`);
+                showToast('✅', `Quotation QTN-${String(qtnId).padStart(4, '0')} submitted to Approvals.`);
+                loadQuotations();
+            } catch(e) {
+                alert('Failed to submit approval.');
+            }
         }
 
-        const rfqData = {
-            'RFQ002': [
-                { vendor: 'Godrej Interio', amount: 138000, delivery: '7 Days', warranty: '1 Year', rating: '4.5/5', best: true },
-                { vendor: 'Infosys Limited', amount: 145000, delivery: '5 Days', warranty: '2 Years', rating: '4.8/5', best: false },
-                { vendor: 'Reliance Digital (Croma)', amount: 152000, delivery: '4 Days', warranty: '1 Year', rating: '4.2/5', best: false }
-            ],
-            'RFQ001': [
-                { vendor: 'Infosys Limited', amount: 520000, delivery: '10 Days', warranty: '3 Years', rating: '4.8/5', best: true },
-                { vendor: 'Reliance Digital (Croma)', amount: 535000, delivery: '8 Days', warranty: '3 Years', rating: '4.3/5', best: false },
-                { vendor: 'Godrej Interio', amount: 550000, delivery: '12 Days', warranty: '2 Years', rating: '4.5/5', best: false }
-            ],
-            'RFQ003': [
-                { vendor: 'Reliance Digital (Croma)', amount: 840000, delivery: '5 Days', warranty: '2 Years', rating: '4.4/5', best: true },
-                { vendor: 'Infosys Limited', amount: 890000, delivery: '6 Days', warranty: '3 Years', rating: '4.8/5', best: false },
-                { vendor: 'Godrej Interio', amount: 920000, delivery: '7 Days', warranty: '1 Year', rating: '4.2/5', best: false }
-            ]
-        };
+        function initCompareSelectors() {
+            const rfqSelector = document.getElementById('rfqSelector');
+            if (!rfqSelector) return;
+
+            // Get unique RFQs in the quotes list
+            const uniqueRfqs = {};
+            allQuotations.forEach(q => {
+                if (q.rfq_id) {
+                    uniqueRfqs[q.rfq_id] = q.rfq_title;
+                }
+            });
+
+            rfqSelector.innerHTML = '';
+            const keys = Object.keys(uniqueRfqs);
+            if (keys.length === 0) {
+                rfqSelector.innerHTML = '<option value="">No RFQs to compare</option>';
+                return;
+            }
+
+            keys.forEach(id => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.innerText = uniqueRfqs[id];
+                rfqSelector.appendChild(opt);
+            });
+        }
 
         function loadComparisonData() {
-            const rfq = document.getElementById('rfqSelector').value;
-            const bids = rfqData[rfq] || [];
+            const rfqId = document.getElementById('rfqSelector').value;
             const container = document.getElementById('comparisonMatrix');
+            if (!container) return;
             container.innerHTML = '';
 
+            if (!rfqId) {
+                container.innerHTML = '<div style="color: #94a3b8;">No data to display.</div>';
+                return;
+            }
+
+            const bids = allQuotations.filter(q => q.rfq_id === parseInt(rfqId));
+            if (bids.length === 0) {
+                container.innerHTML = '<div style="color: #94a3b8;">No bids received for this RFQ yet.</div>';
+                return;
+            }
+
+            // Find lowest price
+            const minPrice = Math.min(...bids.map(b => parseFloat(b.price)));
+
             bids.forEach(bid => {
+                const isBest = parseFloat(bid.price) === minPrice;
                 const card = document.createElement('div');
-                card.className = `matrix-card ${bid.best ? 'best-deal' : ''}`;
+                card.className = `matrix-card ${isBest ? 'best-deal' : ''}`;
                 card.innerHTML = `
-                    <div class="vendor-title">${bid.vendor}</div>
+                    <div class="vendor-title">${bid.vendor_name || '—'}</div>
                     <div class="metric-row">
                         <span class="metric-label">Quote Price:</span>
-                        <span class="metric-value ${bid.best ? 'highlight' : ''}">₹${bid.amount.toLocaleString()}</span>
+                        <span class="metric-value ${isBest ? 'highlight' : ''}">₹${parseFloat(bid.price).toLocaleString()}</span>
                     </div>
                     <div class="metric-row">
                         <span class="metric-label">Delivery Target:</span>
-                        <span class="metric-value">${bid.delivery}</span>
+                        <span class="metric-value">${bid.delivery_days} Days</span>
                     </div>
                     <div class="metric-row">
-                        <span class="metric-label">Warranty Support:</span>
-                        <span class="metric-value">${bid.warranty}</span>
-                    </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Vendor Rating:</span>
-                        <span class="metric-value" style="color: #f59e0b;">★ ${bid.rating}</span>
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value">${bid.status}</span>
                     </div>
                     <div style="margin-top: 20px; text-align: center;">
-                        <button class="btn btn-outline" style="width: 100%;" onclick="showToast('🛒', 'Selected ${bid.vendor} for PO generation.')">Accept Quotation</button>
+                        <button class="btn btn-outline" style="width: 100%;" onclick="showToast('🛒', 'Quotation approved for PO.')">Accept Quotation</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -1067,9 +1106,8 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Sync User Profile & Init Dropdown
-            const storedUsername = localStorage.getItem('username') || 'Admin User';
-            const storedEmail = localStorage.getItem('useremail') || 'admin@vendorbridge.com';
+            const storedUsername = sessionStorage.getItem('username') || 'Admin User';
+            const storedEmail = sessionStorage.getItem('useremail') || 'admin@vendorbridge.com';
             const profileNameEl = document.getElementById('profileName');
             const profileAvatarEl = document.getElementById('profileAvatar');
             if (profileNameEl) profileNameEl.innerText = storedUsername;
@@ -1119,8 +1157,9 @@
                 if (logoutBtn) {
                     logoutBtn.addEventListener("click", (e) => {
                         e.stopPropagation();
-                        localStorage.removeItem('username');
-                        localStorage.removeItem('useremail');
+                        sessionStorage.removeItem('username');
+                        sessionStorage.removeItem('useremail');
+                        sessionStorage.removeItem('userrole');
                         window.location.href = "main.html";
                     });
                 }

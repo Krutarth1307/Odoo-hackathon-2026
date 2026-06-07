@@ -90,37 +90,164 @@ color:green;
 </script>
 
 <div class="header">
-<h1>Vendor Management</h1>
-<a href="#" class="btn">+ Add Vendor</a>
+    <h1>Vendor Management</h1>
+    <button class="btn" id="addVendorBtn">+ Add Vendor</button>
 </div>
 
 <table>
-
-<tr>
-<th>Vendor Name</th>
-<th>Category</th>
-<th>GST Number</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-
-<tr>
-<td>Infosys Limited</td>
-<td>IT Hardware & Software Services</td>
-<td>29AAACI3946F1ZT</td>
-<td><span class="status">Active</span></td>
-<td><button>View</button></td>
-</tr>
-
-<tr>
-<td>Godrej Interio</td>
-<td>Office Furniture & Stationery</td>
-<td>27AAACG0629Q1ZA</td>
-<td><span class="status">Active</span></td>
-<td><button>View</button></td>
-</tr>
-
+    <tr>
+        <th>Vendor Name</th>
+        <th>Category</th>
+        <th>GST Number</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    <tbody id="vendorsBody"></tbody>
 </table>
+
+<!-- Vendor Modal -->
+<div class="modal" id="vendorModal">
+    <div class="modal-content">
+        <span class="close" id="closeVendorModal">&times;</span>
+        <h3 id="vendorModalTitle">Add Vendor</h3>
+        <form id="vendorForm">
+            <input type="hidden" id="vendorId" />
+            <div class="form-group">
+                <label for="vendorName">Vendor Name</label>
+                <input type="text" id="vendorName" required />
+            </div>
+            <div class="form-group">
+                <label for="vendorCategory">Category</label>
+                <input type="text" id="vendorCategory" required />
+            </div>
+            <div class="form-group">
+                <label for="vendorGST">GST Number</label>
+                <input type="text" id="vendorGST" required />
+            </div>
+            <div class="form-group">
+                <label for="vendorStatus">Status</label>
+                <select id="vendorStatus" required>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
+    .modal-content { background:white; padding:20px; border-radius:8px; width:400px; position:relative; }
+    .close { position:absolute; top:10px; right:12px; cursor:pointer; font-size:20px; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; margin-bottom:4px; font-weight:500; }
+    .form-group input, .form-group select { width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; }
+</style>
+
+<script>
+    const API = '';
+
+    async function renderVendors() {
+        try {
+            const res = await fetch(`${API}/api/vendors`);
+            const vendors = await res.json();
+            const tbody = document.getElementById('vendorsBody');
+            tbody.innerHTML = '';
+            
+            if (vendors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;">No vendors found.</td></tr>';
+                return;
+            }
+
+            vendors.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${v.vendor_name}</td>
+                    <td>${v.category || '—'}</td>
+                    <td>${v.gst_number || '—'}</td>
+                    <td><span class="status ${v.status.toLowerCase()}">${v.status}</span></td>
+                    <td>
+                        <button class="btn btn-outline" onclick="openVendorEdit(${v.id}, '${v.vendor_name}', '${v.category}', '${v.gst_number}', '${v.status}')">Edit</button>
+                        <button class="btn btn-outline" onclick="removeVendor(${v.id})" style="margin-left:4px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch(e) {
+            document.getElementById('vendorsBody').innerHTML = 
+                '<tr><td colspan="5" style="color:#ef4444;text-align:center;">⚠ Could not load vendors</td></tr>';
+        }
+    }
+
+    function openVendorEdit(id, name, category, gst, status) {
+        document.getElementById('vendorModalTitle').innerText = 'Edit Vendor';
+        document.getElementById('vendorId').value = id;
+        document.getElementById('vendorName').value = name;
+        document.getElementById('vendorCategory').value = category;
+        document.getElementById('vendorGST').value = gst;
+        document.getElementById('vendorStatus').value = status;
+        document.getElementById('vendorModal').style.display = 'flex';
+    }
+
+    function openVendorAdd() {
+        document.getElementById('vendorModalTitle').innerText = 'Add Vendor';
+        document.getElementById('vendorId').value = '';
+        document.getElementById('vendorName').value = '';
+        document.getElementById('vendorCategory').value = '';
+        document.getElementById('vendorGST').value = '';
+        document.getElementById('vendorStatus').value = 'ACTIVE';
+        document.getElementById('vendorModal').style.display = 'flex';
+    }
+
+    async function removeVendor(id) {
+        if (!confirm('Delete this vendor?')) return;
+        try {
+            await fetch(`${API}/api/vendors/${id}`, { method: 'DELETE' });
+            renderVendors();
+        } catch(e) {
+            alert('Error deleting vendor');
+        }
+    }
+
+    document.getElementById('addVendorBtn').addEventListener('click', openVendorAdd);
+    document.getElementById('closeVendorModal').addEventListener('click', () => {
+        document.getElementById('vendorModal').style.display = 'none';
+    });
+
+    document.getElementById('vendorForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const idVal = document.getElementById('vendorId').value;
+        const vendor_name = document.getElementById('vendorName').value.trim();
+        const category = document.getElementById('vendorCategory').value.trim();
+        const gst_number = document.getElementById('vendorGST').value.trim();
+        const status = document.getElementById('vendorStatus').value;
+
+        const payload = { vendor_name, category, gst_number, status };
+
+        try {
+            if (idVal) {
+                await fetch(`${API}/api/vendors/${idVal}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } else {
+                await fetch(`${API}/api/vendors`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            }
+            document.getElementById('vendorModal').style.display = 'none';
+            renderVendors();
+        } catch(e) {
+            alert('Error saving vendor');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', renderVendors);
+</script>
 
 </body>
 </html>

@@ -133,9 +133,9 @@ FOREIGN KEY (user_id) REFERENCES users(id)
 
 INSERT INTO users(name,email,password,role)
 VALUES
-('Admin','[admin@gmail.com](mailto:admin@gmail.com)','123456','ADMIN'),
-('Manager','[manager@gmail.com](mailto:manager@gmail.com)','123456','MANAGER'),
-('Officer','[officer@gmail.com](mailto:officer@gmail.com)','123456','OFFICER');
+('Admin','admin@gmail.com','123456','ADMIN'),
+('Manager','manager@gmail.com','123456','MANAGER'),
+('Officer','officer@gmail.com','123456','OFFICER');
 
 -- =====================================
 -- SAMPLE VENDOR
